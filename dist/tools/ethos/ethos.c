@@ -269,10 +269,38 @@ static void _clear_neighbor_cache(const char *ifname)
     }
 }
 
+static int _parse_baudrate(const char *arg, unsigned *baudrate)
+{
+    switch(strtol(arg, (char**)NULL, 10)) {
+    case 9600:
+        *baudrate = B9600;
+        break;
+    case 19200:
+        *baudrate = B19200;
+        break;
+    case 38400:
+        *baudrate = B38400;
+        break;
+    case 57600:
+        *baudrate = B57600;
+        break;
+    case 115200:
+        *baudrate = B115200;
+        break;
+    case 500000:
+        *baudrate = B500000;
+        break;
+    default:
+        return -1;
+    }
+
+    return 0;
+}
+
 int main(int argc, char *argv[])
 {
     char inbuf[MTU];
-    int speed = BAUDRATE_DEFAULT;
+    unsigned baudrate = BAUDRATE_DEFAULT;
 
     serial_t serial = {0};
 
@@ -281,13 +309,9 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    if (argc >= 4) {
-        speed = atoi(argv[3]);
-        /* baudrates smaller 9600 don't make sense */
-        if (speed < 9600) {
-            fprintf(stderr, "Invalid baudrate specified: %s\n", argv[3]);
-            return 1;
-        }
+    if (argc >= 4 && _parse_baudrate(argv[3], &baudrate) == -1) {
+        fprintf(stderr, "Invalid baudrate specified: %s\n", argv[3]);
+        return 1;
     }
 
     char ifname[IFNAMSIZ];
@@ -305,7 +329,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    set_serial_attribs(serial_fd, speed, 0);
+    set_serial_attribs(serial_fd, baudrate, 0);
     set_blocking(serial_fd, 1);
 
     fd_set readfds;
