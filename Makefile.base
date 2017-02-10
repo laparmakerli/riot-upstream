@@ -60,6 +60,8 @@ $(OBJC): $(BINDIR)$(MODULE)/%.o: %.c
 	$(AD)$(CCACHE) $(CC) \
 		-DRIOT_FILE_RELATIVE=\"$(patsubst $(RIOTBASE)/%,%,$(abspath $<))\" \
 		-DRIOT_FILE_NOPATH=\"$(notdir $<)\" \
+		-Xclang -load -Xclang \
+		$(RIOTBASE)/llvm-protection-pass/build/protection/libProtectionPass.so  \
 		$(CFLAGS) $(INCLUDES) -MD -MP -c -o $@ $(abspath $<)
 
 $(OBJCXX): $(BINDIR)$(MODULE)/%.o: %.cpp

@@ -86,3 +86,18 @@ All code files contain licensing information.
 For more information, see the RIOT website:
 
 http://www.riot-os.org
+
+
+## BUILD RIOT WITH LLVM INSTRUMENTATION FOR MEMORY PROTECTION
+
+### BUILD EXAMPLE MODULES FOR IOT-LAB
+
+```{r, engine='bash', count_lines}
+cd llvm-protection-pass
+mkdir build
+cd build
+cmake ..
+make
+cd ../../examples/<module>
+TOOLCHAIN=llvm BOARD=iotlab-m3 make all
+```
