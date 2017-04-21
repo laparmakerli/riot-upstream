@@ -567,7 +567,7 @@ void *_event_loop(void *args)
     gnrc_netreg_register(GNRC_NETTYPE_UDP, &my_reg);
 
     while (1) {
-        msg_receive(&msg);
+        svc_msg_receive(&msg);
 
         switch (msg.type) {
             case GNRC_NETAPI_MSG_TYPE_RCV:

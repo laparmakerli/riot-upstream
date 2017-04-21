@@ -79,7 +79,7 @@ static void *_nomac_thread(void *args)
     /* start the event loop */
     while (1) {
         DEBUG("nomac: waiting for incoming messages\n");
-        msg_receive(&msg);
+        svc_msg_receive(&msg);
         /* dispatch NETDEV and NETAPI messages */
         switch (msg.type) {
             case GNRC_NETDEV_MSG_TYPE_EVENT:

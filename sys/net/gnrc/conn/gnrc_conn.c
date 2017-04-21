@@ -29,7 +29,7 @@ int gnrc_conn_recvfrom(conn_t *conn, void *data, size_t max_len, void *addr, siz
     while ((timeout--) > 0) {
         gnrc_pktsnip_t *pkt, *l3hdr;
         size_t size = 0;
-        msg_receive(&msg);
+        svc_msg_receive(&msg);
         switch (msg.type) {
             case GNRC_NETAPI_MSG_TYPE_RCV:
                 pkt = (gnrc_pktsnip_t *)msg.content.ptr;

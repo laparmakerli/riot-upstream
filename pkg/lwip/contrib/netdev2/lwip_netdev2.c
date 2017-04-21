@@ -249,7 +249,7 @@ static void *_event_loop(void *arg)
     svc_msg_init_queue(_queue, LWIP_NETDEV2_QUEUE_LEN);
     while (1) {
         msg_t msg;
-        msg_receive(&msg);
+        svc_msg_receive(&msg);
         if (msg.type == LWIP_NETDEV2_MSG_TYPE_EVENT) {
             netdev2_t *dev = (netdev2_t *)msg.content.ptr;
             dev->driver->isr(dev);

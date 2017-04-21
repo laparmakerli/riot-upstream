@@ -207,7 +207,7 @@ static void *_slip(void *args)
 
     while (1) {
         DEBUG("slip: waiting for incoming messages\n");
-        msg_receive(&msg);
+        svc_msg_receive(&msg);
 
         switch (msg.type) {
             case _SLIP_MSG_TYPE:

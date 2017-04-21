@@ -228,7 +228,7 @@ static void *_event_loop(void *arg)
 
     /* dispatch NETAPI messages */
     while (1) {
-        msg_receive(&msg);
+        svc_msg_receive(&msg);
         switch (msg.type) {
             case GNRC_NETAPI_MSG_TYPE_RCV:
                 DEBUG("udp: GNRC_NETAPI_MSG_TYPE_RCV\n");

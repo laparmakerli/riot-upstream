@@ -470,7 +470,7 @@ int _tftp_server(tftp_context_t *ctxt)
         /* main processing loop */
         while (ret == TS_BUSY) {
             /* wait for a message */
-            msg_receive(&msg);
+            svc_msg_receive(&msg);
 
             /* check if the server stop message has been received */
             if (msg.type == TFTP_STOP_SERVER_MSG) {
@@ -538,7 +538,7 @@ int _tftp_do_client_transfer(tftp_context_t *ctxt)
     /* main processing loop */
     while (ret == TS_BUSY) {
         /* wait for a message */
-        msg_receive(&msg);
+        svc_msg_receive(&msg);
         DEBUG("tftp: message received\n");
         ret = _tftp_state_processes(ctxt, &msg);
 
