@@ -356,7 +356,7 @@ static int fib_signal_rp(fib_table_t *table, uint16_t type, uint8_t *dat,
                      * using the provided pointer after replying this message
                      * will lead to errors
                      */
-                    msg_send_receive(&msg, &reply, table->notify_rp[i]);
+                    svc_msg_send_receive(&msg, &reply, table->notify_rp[i]);
                     DEBUG("[fib_signal_rp] got reply.\n");
                     ret = 0;
                 }
@@ -371,7 +371,7 @@ static int fib_signal_rp(fib_table_t *table, uint16_t type, uint8_t *dat,
                      * using the provided pointer after replying this message
                      * will lead to errors
                      */
-                    msg_send_receive(&msg, &reply, table->notify_rp[i]);
+                    svc_msg_send_receive(&msg, &reply, table->notify_rp[i]);
                     DEBUG("[fib_signal_rp] got reply.\n");
                     ret = 0;
                 }
