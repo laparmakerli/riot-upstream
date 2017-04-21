@@ -383,21 +383,46 @@ __attribute__((naked)) void isr_svc(void)
 
 void SVC_Handler_C(unsigned int *svc_args){
     uint8_t svc_number;
-    svc_number = ((char *) svc_args[6])[-2];
-    uint32_t stacked_r0;
-
+    svc_number = ((char *) svc_args[6])[-2]; 
+    uint32_t stacked_r0, stacked_r1, stacked_r2;
+    
     stacked_r0 = svc_args[0];
-
-    thread_description * td;
+    stacked_r1 = svc_args[1];
+    stacked_r2 = svc_args[2];
+    thread_description * td; 
 
     switch(svc_number){
         case 0: break;
-        case 1:
+        case 1: 
                 asm("b start_threading");
                 break;
-        case 2:
+        case 2: 
                 td = (thread_description*) stacked_r0;
                 svc_args[0] = thread_create(td->stacksize, td->priority, td->flags, td->func, td->arg, td->name);
+                break;
+        case 3: 
+                msg_init_queue((msg_t*)stacked_r0, (int32_t) stacked_r1);
+                break;
+        case 4: 
+                svc_args[0] = msg_try_send((msg_t*)stacked_r0, (int16_t) stacked_r1);
+                break;
+        case 5:                 
+                svc_args[0] = msg_send((msg_t*)stacked_r0, (int16_t) stacked_r1);
+                break;
+        case 6: 
+                svc_args[0] = msg_receive((msg_t*)stacked_r0);
+                break;
+        case 7: 
+                svc_args[0] = msg_send_to_self((msg_t*)stacked_r0);
+                break;
+        case 8: 
+                svc_args[0] = msg_try_receive((msg_t*)stacked_r0);
+                break;
+        case 9: 
+                svc_args[0] = msg_send_receive((msg_t*)stacked_r0, (msg_t*)stacked_r1, (int16_t)stacked_r2);
+                break;
+        case 10: 
+                svc_args[0] = msg_reply((msg_t*)stacked_r0, (msg_t*)stacked_r1);
                 break;
         default: break;
     }
