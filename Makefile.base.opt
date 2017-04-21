@@ -61,11 +61,11 @@ $(OBJC): $(BINDIR)$(MODULE)/%.o: %.c
 	$(AD)$(CCACHE) $(CC) \
 		-DRIOT_FILE_RELATIVE=\"$(patsubst $(RIOTBASE)/%,%,$(abspath $<))\" \
 		-DRIOT_FILE_NOPATH=\"$(notdir $<)\" \
-		$(CFLAGS) $(INCLUDES) -MD -MP -emit-llvm -c -o temp.bc $(abspath $<)
+		$(CFLAGS) $(INCLUDES) -MD -MP -emit-llvm -c -S -o $@.ll $(abspath $<)
 
-	opt -load $(RIOTBASE)/llvm-protection-pass/build/protection/libProtectionPass.so -protection < temp.bc > temp2.bc
+	opt -load $(RIOTBASE)/llvm-protection-pass/build/protection/libProtectionPass.so -protection -S < $@.ll > $@2.ll
 
-	llc -filetype=obj temp2.bc -o $@
+	llc -filetype=obj $@2.ll -o $@
 	
 
 $(OBJCXX): $(BINDIR)$(MODULE)/%.o: %.cpp
