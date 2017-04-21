@@ -220,7 +220,7 @@ static void *_event_loop(void *arg)
     reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
     reply.content.value = (uint32_t)-ENOTSUP;
     /* initialize message queue */
-    msg_init_queue(msg_queue, GNRC_UDP_MSG_QUEUE_SIZE);
+    svc_msg_init_queue(msg_queue, GNRC_UDP_MSG_QUEUE_SIZE);
     /* register UPD at netreg */
     netreg.demux_ctx = GNRC_NETREG_DEMUX_CTX_ALL;
     netreg.pid = thread_getpid();

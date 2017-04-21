@@ -117,7 +117,7 @@ static void* uhcp_client_thread(void *arg)
 {
     (void)arg;
 
-    msg_init_queue(_uhcp_msg_queue, sizeof(_uhcp_msg_queue)/sizeof(msg_t));
+    svc_msg_init_queue(_uhcp_msg_queue, sizeof(_uhcp_msg_queue)/sizeof(msg_t));
     uhcp_client(gnrc_border_interface);
     return NULL;
 }

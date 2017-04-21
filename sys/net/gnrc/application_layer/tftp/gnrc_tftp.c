@@ -445,7 +445,7 @@ int gnrc_tftp_server_stop(void)
     };
 
     /* send the stop message */
-    msg_send(&m, _tftp_kernel_pid);
+    svc_msg_send(&m, _tftp_kernel_pid);
 
     return 0;
 }

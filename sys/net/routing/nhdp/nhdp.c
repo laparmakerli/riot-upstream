@@ -245,7 +245,7 @@ static void *_nhdp_runner(void *arg)
     msg_t msg_rcvd, msg_queue[NHDP_MSG_QUEUE_SIZE];
 
     (void)arg;
-    msg_init_queue(msg_queue, NHDP_MSG_QUEUE_SIZE);
+    svc_msg_init_queue(msg_queue, NHDP_MSG_QUEUE_SIZE);
 
     while (1) {
         msg_receive(&msg_rcvd);
@@ -296,7 +296,7 @@ static void *_nhdp_receiver(void *arg __attribute__((unused)))
     char nhdp_rcv_buf[NHDP_MAX_RFC5444_PACKET_SZ];
     msg_t msg_q[NHDP_MSG_QUEUE_SIZE];
 
-    msg_init_queue(msg_q, NHDP_MSG_QUEUE_SIZE);
+    svc_msg_init_queue(msg_q, NHDP_MSG_QUEUE_SIZE);
 
     /* Configure socket address for the manet port 269 */
     ipv6_addr_t unspec = IPV6_ADDR_UNSPECIFIED;

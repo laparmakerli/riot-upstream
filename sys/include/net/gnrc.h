@@ -62,7 +62,7 @@
  * {
  *     static msg_t _msg_q[Q_SZ];
  *     (void)arg;
- *     msg_init_queue(_msg_q, Q_SZ);
+ *     svc_msg_init_queue(_msg_q, Q_SZ);
  *     gnrc_netreg_entry me_reg = {
  *             .demux_ctx = GNRC_NETREG_DEMUX_CTX_ALL,
  *             .pid = thread_getpid()
@@ -112,7 +112,7 @@
  *     msg_t msg, reply;
  *     reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
  *     reply.content.value = -ENOTSUP;
- *     msg_init_queue(_msg_q, Q_SZ);
+ *     svc_msg_init_queue(_msg_q, Q_SZ);
  *     gnrc_pktsnip_t *pkt = NULL;
  *     gnrc_netreg_entry me_reg = { .demux_ctx = 80, .pid = thread_getpid() };
  *     gnrc_netreg_register(GNRC_NETTYPE_UDP, &me_reg);

@@ -199,7 +199,7 @@ static void *_slip(void *args)
     gnrc_slip_dev_t *dev = _SLIP_DEV(args);
     msg_t msg, reply, msg_q[_SLIP_MSG_QUEUE_SIZE];
 
-    msg_init_queue(msg_q, _SLIP_MSG_QUEUE_SIZE);
+    svc_msg_init_queue(msg_q, _SLIP_MSG_QUEUE_SIZE);
     dev->slip_pid = thread_getpid();
     gnrc_netif_add(dev->slip_pid);
 

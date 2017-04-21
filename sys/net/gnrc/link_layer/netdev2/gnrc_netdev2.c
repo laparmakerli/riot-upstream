@@ -58,7 +58,7 @@ static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
         msg.type = NETDEV2_MSG_TYPE_EVENT;
         msg.content.ptr = (void*) gnrc_netdev2;
 
-        if (msg_send(&msg, gnrc_netdev2->pid) <= 0) {
+        if (svc_msg_send(&msg, gnrc_netdev2->pid) <= 0) {
             puts("gnrc_netdev2: possibly lost interrupt.");
         }
     }
@@ -120,7 +120,7 @@ static void *_gnrc_netdev2_thread(void *args)
     msg_t msg, reply, msg_queue[NETDEV2_NETAPI_MSG_QUEUE_SIZE];
 
     /* setup the MAC layers message queue */
-    msg_init_queue(msg_queue, NETDEV2_NETAPI_MSG_QUEUE_SIZE);
+    svc_msg_init_queue(msg_queue, NETDEV2_NETAPI_MSG_QUEUE_SIZE);
 
     /* register the event callback with the device driver */
     dev->event_callback = _event_cb;

@@ -58,7 +58,7 @@ static gnrc_nettest_res_t _pkt_test(uint16_t cmd_type, kernel_pid_t pid,
     msg.type = cmd_type;
     msg.content.ptr = (char *)in;
 
-    msg_send(&msg, pid);
+    svc_msg_send(&msg, pid);
 
     if (exp_pkts == 0) {
         thread_yield();
@@ -222,7 +222,7 @@ static void *_event_loop(void *arg)
     msg_t reply, msg_queue[GNRC_NETTEST_MSG_QUEUE_SIZE];
 
     (void)arg;
-    msg_init_queue(msg_queue, GNRC_NETTEST_MSG_QUEUE_SIZE);
+    svc_msg_init_queue(msg_queue, GNRC_NETTEST_MSG_QUEUE_SIZE);
     reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
 
     while (1) {
