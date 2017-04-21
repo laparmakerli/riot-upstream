@@ -212,6 +212,9 @@ typedef struct {
  */
 int msg_send(msg_t *m, kernel_pid_t target_pid);
 
+int svc_msg_send(msg_t *m, kernel_pid_t target_pid);
+
+
 
 /**
  * @brief Send a message (non-blocking).
@@ -231,6 +234,9 @@ int msg_send(msg_t *m, kernel_pid_t target_pid);
  */
 int msg_try_send(msg_t *m, kernel_pid_t target_pid);
 
+int svc_msg_try_send(msg_t *m, kernel_pid_t target_pid);
+
+
 
 /**
  * @brief Send a message to the current thread.
@@ -246,6 +252,11 @@ int msg_try_send(msg_t *m, kernel_pid_t target_pid);
  * @return 0 if the thread's message queue is full (or inexistent)
  */
 int msg_send_to_self(msg_t *m);
+
+int svc_msg_send_to_self(msg_t *m);
+
+
+
 
 /**
  * Value of msg_t::sender_pid if the sender was an interrupt service routine.
@@ -296,6 +307,8 @@ static inline int msg_sent_by_int(const msg_t *m)
  */
 int msg_receive(msg_t *m);
 
+int svc_msg_receive(msg_t *m);
+
 /**
  * @brief Try to receive a message.
  *
@@ -308,6 +321,9 @@ int msg_receive(msg_t *m);
  * @return  -1, otherwise.
  */
 int msg_try_receive(msg_t *m);
+
+int svc_msg_try_receive(msg_t *m);
+
 
 /**
  * @brief Send a message, block until reply received.
@@ -327,6 +343,9 @@ int msg_try_receive(msg_t *m);
  */
 int msg_send_receive(msg_t *m, msg_t *reply, kernel_pid_t target_pid);
 
+int svc_msg_send_receive(msg_t *m, msg_t *reply, kernel_pid_t target_pid);
+
+
 /**
  * @brief Replies to a message.
  *
@@ -339,6 +358,9 @@ int msg_send_receive(msg_t *m, msg_t *reply, kernel_pid_t target_pid);
  * @return -1, on error
  */
 int msg_reply(msg_t *m, msg_t *reply);
+
+int svc_msg_reply(msg_t *m, msg_t *reply);
+
 
 /**
  * @brief Replies to a message from interrupt.
@@ -371,6 +393,8 @@ int msg_avail(void);
  *                  **MUST BE POWER OF TWO!**
  */
 void msg_init_queue(msg_t *array, int num);
+
+void svc_msg_init_queue(msg_t *array, int num);
 
 /**
  * @brief   Prints the message queue of the current thread.
