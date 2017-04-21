@@ -231,7 +231,7 @@ static void *_event_loop(void *args)
             case GNRC_NETAPI_MSG_TYPE_SET:
                 DEBUG("RPL: reply to unsupported get/set\n");
                 reply.content.value = -ENOTSUP;
-                msg_reply(&msg, &reply);
+                svc_msg_reply(&msg, &reply);
                 break;
             default:
                 break;

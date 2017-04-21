@@ -141,7 +141,7 @@ static void *_eventloop(void *arg)
                 break;
             case GNRC_NETAPI_MSG_TYPE_GET:
             case GNRC_NETAPI_MSG_TYPE_SET:
-                msg_reply(&msg, &reply);
+                svc_msg_reply(&msg, &reply);
                 break;
             default:
                 puts("PKTDUMP: received something unexpected");

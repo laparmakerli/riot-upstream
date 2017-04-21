@@ -102,7 +102,7 @@ static void *_nomac_thread(void *args)
                 /* send reply to calling thread */
                 reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
                 reply.content.value = (uint32_t)res;
-                msg_reply(&msg, &reply);
+                svc_msg_reply(&msg, &reply);
                 break;
             case GNRC_NETAPI_MSG_TYPE_GET:
                 /* TODO: filter out MAC layer options -> for now forward
@@ -116,7 +116,7 @@ static void *_nomac_thread(void *args)
                 /* send reply to calling thread */
                 reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
                 reply.content.value = (uint32_t)res;
-                msg_reply(&msg, &reply);
+                svc_msg_reply(&msg, &reply);
                 break;
             default:
                 DEBUG("nomac: Unknown command %" PRIu16 "\n", msg.type);

@@ -130,7 +130,7 @@
  *                 break;
  *              case GNRC_NETAPI_MSG_TYPE_SET:
  *              case GNRC_NETAPI_MSG_TYPE_GET:
- *                 msg_reply(&msg, &reply);
+ *                 svc_msg_reply(&msg, &reply);
  *                 break;
  *             default:
  *                 break;
