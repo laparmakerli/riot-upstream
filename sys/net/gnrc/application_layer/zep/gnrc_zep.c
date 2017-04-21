@@ -589,7 +589,7 @@ void *_event_loop(void *args)
                 opt = (gnrc_netapi_opt_t *)msg.content.ptr;
                 ack.type = GNRC_NETAPI_MSG_TYPE_ACK;
                 ack.content.value = _get(dev, opt->opt, opt->data, opt->data_len);
-                msg_reply(&msg, &ack);
+                svc_msg_reply(&msg, &ack);
                 break;
 
             case GNRC_NETAPI_MSG_TYPE_SET:
@@ -597,7 +597,7 @@ void *_event_loop(void *args)
                 opt = (gnrc_netapi_opt_t *)msg.content.ptr;
                 ack.type = GNRC_NETAPI_MSG_TYPE_ACK;
                 ack.content.value = _set(dev, opt->opt, opt->data, opt->data_len);
-                msg_reply(&msg, &ack);
+                svc_msg_reply(&msg, &ack);
                 break;
 
             default:

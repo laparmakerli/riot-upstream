@@ -225,7 +225,7 @@ static void *_slip(void *args)
                 DEBUG("slip: GNRC_NETAPI_MSG_TYPE_GET received\n");
                 reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
                 reply.content.value = (uint32_t)_slip_get((gnrc_netapi_opt_t *)msg.content.ptr);
-                msg_reply(&msg, &reply);
+                svc_msg_reply(&msg, &reply);
                 break;
 
             case GNRC_NETAPI_MSG_TYPE_SET:
@@ -233,7 +233,7 @@ static void *_slip(void *args)
                 reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
                 reply.content.value = (uint32_t)(-ENOTSUP);
                 DEBUG("slip: I don't support this but have to reply.\n");
-                msg_reply(&msg, &reply);
+                svc_msg_reply(&msg, &reply);
                 break;
         }
     }

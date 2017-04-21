@@ -247,7 +247,7 @@ static void *_event_loop(void *arg)
                 break;
         }
 
-        msg_reply(&msg, &reply);
+        svc_msg_reply(&msg, &reply);
     }
 
     return NULL;

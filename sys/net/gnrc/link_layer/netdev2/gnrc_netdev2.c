@@ -158,7 +158,7 @@ static void *_gnrc_netdev2_thread(void *args)
                 /* send reply to calling thread */
                 reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
                 reply.content.value = (uint32_t)res;
-                msg_reply(&msg, &reply);
+                svc_msg_reply(&msg, &reply);
                 break;
             case GNRC_NETAPI_MSG_TYPE_GET:
                 /* read incoming options */
@@ -171,7 +171,7 @@ static void *_gnrc_netdev2_thread(void *args)
                 /* send reply to calling thread */
                 reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
                 reply.content.value = (uint32_t)res;
-                msg_reply(&msg, &reply);
+                svc_msg_reply(&msg, &reply);
                 break;
             default:
                 DEBUG("gnrc_netdev2: Unknown command %" PRIu16 "\n", msg.type);
