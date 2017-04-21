@@ -38,7 +38,7 @@ int gnrc_conn_recvfrom(conn_t *conn, void *data, size_t max_len, void *addr, siz
                 }
                 l3hdr = gnrc_pktsnip_search_type(pkt, conn->l3_type);
                 if (l3hdr == NULL) {
-                    msg_send_to_self(&msg); /* requeue invalid messages */
+                    svc_msg_send_to_self(&msg); /* requeue invalid messages */
                     continue;
                 }
 #if defined(MODULE_CONN_UDP) || defined(MODULE_CONN_TCP)
@@ -46,7 +46,7 @@ int gnrc_conn_recvfrom(conn_t *conn, void *data, size_t max_len, void *addr, siz
                     gnrc_pktsnip_t *l4hdr;
                     l4hdr = gnrc_pktsnip_search_type(pkt, conn->l4_type);
                     if (l4hdr == NULL) {
-                        msg_send_to_self(&msg); /* requeue invalid messages */
+                        svc_msg_send_to_self(&msg); /* requeue invalid messages */
                         continue;
                     }
                     *port = byteorder_ntohs(((udp_hdr_t *)l4hdr->data)->src_port);
@@ -62,7 +62,7 @@ int gnrc_conn_recvfrom(conn_t *conn, void *data, size_t max_len, void *addr, siz
                 return (int)size;
             default:
                 (void)port;
-                msg_send_to_self(&msg); /* requeue invalid messages */
+                svc_msg_send_to_self(&msg); /* requeue invalid messages */
                 break;
         }
     }

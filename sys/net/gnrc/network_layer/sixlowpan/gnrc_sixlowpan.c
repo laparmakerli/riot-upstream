@@ -292,7 +292,7 @@ static void _send(gnrc_pktsnip_t *pkt)
         msg.type = GNRC_SIXLOWPAN_MSG_FRAG_SND;
         msg.content.ptr = (void *)&fragment_msg;
         /* send message to self */
-        msg_send_to_self(&msg);
+        svc_msg_send_to_self(&msg);
     }
     else {
         DEBUG("6lo: packet too big (%u > %" PRIu16 ")\n",

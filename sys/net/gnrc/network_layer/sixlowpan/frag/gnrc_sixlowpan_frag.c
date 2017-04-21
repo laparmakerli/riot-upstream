@@ -252,7 +252,7 @@ void gnrc_sixlowpan_frag_send(gnrc_sixlowpan_msg_frag_t *fragment_msg)
         /* send message to self*/
         msg.type = GNRC_SIXLOWPAN_MSG_FRAG_SND;
         msg.content.ptr = (void *)fragment_msg;
-        msg_send_to_self(&msg);
+        svc_msg_send_to_self(&msg);
         thread_yield();
     }
     else {
@@ -272,7 +272,7 @@ void gnrc_sixlowpan_frag_send(gnrc_sixlowpan_msg_frag_t *fragment_msg)
             /* send message to self*/
             msg.type = GNRC_SIXLOWPAN_MSG_FRAG_SND;
             msg.content.ptr = (void *)fragment_msg;
-            msg_send_to_self(&msg);
+            svc_msg_send_to_self(&msg);
             thread_yield();
         }
         else {
