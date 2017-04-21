@@ -192,8 +192,8 @@ kernel_pid_t gnrc_netdev2_init(char *stack, int stacksize, char priority,
         return -ENODEV;
     }
 
-    /* create new gnrc_netdev2 thread */
-    res = thread_create(stack, stacksize, priority, THREAD_CREATE_STACKTEST,
+    /* create new gnrc_netdev2 thread */   // ToDoLars :   Stackübergabe vom Caller unterbinden
+    res = svc_thread_create(stacksize, priority, THREAD_CREATE_STACKTEST,
                          _gnrc_netdev2_thread, (void *)gnrc_netdev2, name);
     if (res <= 0) {
         return -EINVAL;

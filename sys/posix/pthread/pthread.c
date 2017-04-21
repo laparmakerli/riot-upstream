@@ -75,7 +75,6 @@ static mutex_t pthread_mutex;
 
 static volatile kernel_pid_t pthread_reaper_pid = KERNEL_PID_UNDEF;
 
-static char pthread_reaper_stack[PTHREAD_REAPER_STACKSIZE];
 
 static void *pthread_start_routine(void *pt_)
 {
@@ -138,9 +137,8 @@ int pthread_create(pthread_t *newthread, const pthread_attr_t *attr, void *(*sta
     if (autofree && pthread_reaper_pid != KERNEL_PID_UNDEF) {
         mutex_lock(&pthread_mutex);
         if (pthread_reaper_pid != KERNEL_PID_UNDEF) {
-            /* volatile pid to overcome problems with double checking */
-            volatile kernel_pid_t pid = thread_create(pthread_reaper_stack,
-                                             PTHREAD_REAPER_STACKSIZE,
+            /* volatile pid to overcome problems with double checking */      //  ToDoLars :: svc call hier notwendig?
+            volatile kernel_pid_t pid = svc_thread_create(PTHREAD_REAPER_STACKSIZE,
                                              0,
                                              THREAD_CREATE_STACKTEST,
                                              pthread_reaper,
@@ -151,8 +149,8 @@ int pthread_create(pthread_t *newthread, const pthread_attr_t *attr, void *(*sta
         mutex_unlock(&pthread_mutex);
     }
 
-    pt->thread_pid = thread_create(stack,
-                                   stack_size,
+    //  ToDoLars ::  svc hier notwendig?  +  stack alloziierung und Erstellung in stack Variable unterbinden 
+    pt->thread_pid = svc_thread_create(stack_size,
                                    THREAD_PRIORITY_MAIN,
                                    THREAD_CREATE_WOUT_YIELD |
                                    THREAD_CREATE_STACKTEST,

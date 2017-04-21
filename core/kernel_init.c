@@ -27,6 +27,7 @@
 #include "lpm.h"
 #include "irq.h"
 #include "log.h"
+#include "memmgmt.h"
 
 #ifdef MODULE_SCHEDSTATISTICS
 #include "sched.h"
@@ -82,19 +83,19 @@ static void *idle_thread(void *arg)
 const char *main_name = "main";
 const char *idle_name = "idle";
 
-static char main_stack[THREAD_STACKSIZE_MAIN];
-static char idle_stack[THREAD_STACKSIZE_IDLE];
 
 void kernel_init(void)
 {
     (void) irq_disable();
 
-    thread_create(idle_stack, sizeof(idle_stack),
+    init_blocks();
+
+    svc_thread_create(THREAD_STACKSIZE_IDLE,
             THREAD_PRIORITY_IDLE,
             THREAD_CREATE_WOUT_YIELD | THREAD_CREATE_STACKTEST,
             idle_thread, NULL, idle_name);
 
-    thread_create(main_stack, sizeof(main_stack),
+    svc_thread_create(THREAD_STACKSIZE_MAIN,
             THREAD_PRIORITY_MAIN,
             THREAD_CREATE_WOUT_YIELD | THREAD_CREATE_STACKTEST,
             main_trampoline, NULL, main_name);

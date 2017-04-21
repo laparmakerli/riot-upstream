@@ -30,7 +30,6 @@
 static gnrc_nettest_opt_cbs_t _opt_cbs[NETOPT_NUMOF];
 static mutex_t _mutex = MUTEX_INIT;
 static kernel_pid_t _pid = KERNEL_PID_UNDEF;
-static char _stack[GNRC_NETTEST_STACK_SIZE];
 
 static void *_event_loop(void *arg);
 
@@ -186,7 +185,7 @@ gnrc_nettest_res_t gnrc_nettest_set(kernel_pid_t pid, netopt_t opt,
 int gnrc_nettest_init(void)
 {
     if (_pid <= KERNEL_PID_UNDEF) {
-        _pid = thread_create(_stack, sizeof(_stack), GNRC_NETTEST_PRIO,
+        _pid = svc_thread_create(GNRC_NETTEST_STACK_SIZE, GNRC_NETTEST_PRIO,
                              THREAD_CREATE_STACKTEST,
                              _event_loop, NULL, "nettest");
     }

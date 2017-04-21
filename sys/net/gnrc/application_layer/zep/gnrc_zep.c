@@ -46,7 +46,6 @@
 #define IEEE_802154_FCS_POLY    (0x8408)  /* x^16 + x^12 + x^5 + 1 for LSB first */
 
 static kernel_pid_t _pid = KERNEL_PID_UNDEF;
-static char _rx_stack[GNRC_ZEP_STACK_SIZE];
 static char _rx_buf_array[_RX_BUF_SIZE];
 static ringbuffer_t _rx_buf = RINGBUFFER_INIT(_rx_buf_array);
 
@@ -161,7 +160,7 @@ kernel_pid_t gnrc_zep_init(gnrc_zep_t *dev, uint16_t src_port, ipv6_addr_t *dst,
     dev->version = 2;
     dev->lqi_mode = 1;
 
-    _pid = thread_create(_rx_stack, GNRC_ZEP_STACK_SIZE, GNRC_ZEP_PRIO,
+    _pid = svc_thread_create(GNRC_ZEP_STACK_SIZE, GNRC_ZEP_PRIO,
                          THREAD_CREATE_STACKTEST, _event_loop, dev, "zep_app");
 
     DEBUG("zep: started thread with PID %" PRIkernel_pid "\n", _pid);

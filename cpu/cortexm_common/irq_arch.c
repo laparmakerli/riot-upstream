@@ -28,7 +28,7 @@
 unsigned int irq_arch_disable(void)
 {
     uint32_t mask = __get_PRIMASK();
-    __disable_irq();
+    //__disable_irq();    ToDoLars   wieder entkommentieren
     return mask;
 }
 

@@ -42,9 +42,9 @@ static kernel_pid_t _pid = KERNEL_PID_UNDEF;
  * @brief   Allocate memory for the UDP thread's stack
  */
 #if ENABLE_DEBUG
-static char _stack[GNRC_UDP_STACK_SIZE + THREAD_EXTRA_STACKSIZE_PRINTF];
+static int stacksize = GNRC_UDP_STACK_SIZE + THREAD_EXTRA_STACKSIZE_PRINTF;
 #else
-static char _stack[GNRC_UDP_STACK_SIZE];
+static int stacksize = GNRC_UDP_STACK_SIZE;
 #endif
 
 /**
@@ -295,7 +295,7 @@ int gnrc_udp_init(void)
     /* check if thread is already running */
     if (_pid == KERNEL_PID_UNDEF) {
         /* start UDP thread */
-        _pid = thread_create(_stack, sizeof(_stack), GNRC_UDP_PRIO,
+        _pid = svc_thread_create(stacksize, GNRC_UDP_PRIO,
                              THREAD_CREATE_STACKTEST, _event_loop, NULL, "udp");
     }
     return _pid;
