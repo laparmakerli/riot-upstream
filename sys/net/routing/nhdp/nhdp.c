@@ -248,7 +248,7 @@ static void *_nhdp_runner(void *arg)
     svc_msg_init_queue(msg_queue, NHDP_MSG_QUEUE_SIZE);
 
     while (1) {
-        msg_receive(&msg_rcvd);
+        svc_msg_receive(&msg_rcvd);
 
         switch (msg_rcvd.type) {
             case HELLO_TIMER:

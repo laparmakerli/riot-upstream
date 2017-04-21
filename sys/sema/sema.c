@@ -104,7 +104,7 @@ int sema_wait_timed_msg(sema_t *sema, uint64_t timeout, msg_t *msg)
               sched_active_thread->pid, sched_active_thread->priority);
 
         irq_restore(old_state);
-        msg_receive(msg);
+        svc_msg_receive(msg);
         old_state = irq_disable();
         if (timeout != 0) {
             xtimer_remove(&timeout_timer);

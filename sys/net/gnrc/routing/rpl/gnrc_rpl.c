@@ -200,7 +200,7 @@ static void *_event_loop(void *args)
     /* start event loop */
     while (1) {
         DEBUG("RPL: waiting for incoming message.\n");
-        msg_receive(&msg);
+        svc_msg_receive(&msg);
 
         switch (msg.type) {
             case GNRC_RPL_MSG_TYPE_LIFETIME_UPDATE:

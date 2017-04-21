@@ -132,7 +132,7 @@ int conn_udp_recvfrom(conn_udp_t *conn, void *data, size_t max_len, void *addr,
     }
     conn->waiting_thread = sched_active_pid;
     mutex_unlock(&conn->mutex);
-    msg_receive(&msg);
+    svc_msg_receive(&msg);
     if (msg.type == _MSG_TYPE_CLOSE) {
         conn->waiting_thread = KERNEL_PID_UNDEF;
         return -EINTR;

@@ -135,7 +135,7 @@ static void *_gnrc_netdev2_thread(void *args)
     /* start the event loop */
     while (1) {
         DEBUG("gnrc_netdev2: waiting for incoming messages\n");
-        msg_receive(&msg);
+        svc_msg_receive(&msg);
         /* dispatch NETDEV and NETAPI messages */
         switch (msg.type) {
             case NETDEV2_MSG_TYPE_EVENT:

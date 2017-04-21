@@ -174,7 +174,7 @@ static void _setup_timer_msg(msg_t *m, xtimer_t *t)
 /* Waits for incoming message or timeout. */
 static int _msg_wait(msg_t *m, msg_t *tmsg, xtimer_t *t)
 {
-    msg_receive(m);
+    svc_msg_receive(m);
     if (m->type == MSG_XTIMER && m->content.ptr == (char *) tmsg) {
         /* we hit the timeout */
         return -1;

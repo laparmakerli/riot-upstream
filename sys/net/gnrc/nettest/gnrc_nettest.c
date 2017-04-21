@@ -229,7 +229,7 @@ static void *_event_loop(void *arg)
         msg_t msg;
         gnrc_netapi_opt_t *opt;
 
-        msg_receive(&msg);
+        svc_msg_receive(&msg);
 
         switch (msg.type) {
             case GNRC_NETAPI_MSG_TYPE_GET:
