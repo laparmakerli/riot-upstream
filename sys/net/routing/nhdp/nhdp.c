@@ -203,7 +203,7 @@ int nhdp_register_if(kernel_pid_t if_pid, uint8_t *addr, size_t addr_size, uint8
     signal_msg.type = HELLO_TIMER;
     signal_msg.content.ptr = (char *) if_entry;
     /* TODO: msg_send or msg_try_send? */
-    msg_try_send(&signal_msg, nhdp_pid);
+    svc_msg_try_send(&signal_msg, nhdp_pid);
 
     return 0;
 }

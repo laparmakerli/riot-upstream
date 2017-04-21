@@ -66,7 +66,7 @@ static inline int _snd_rcv(kernel_pid_t pid, uint16_t type, gnrc_pktsnip_t *pkt)
     msg.type = type;
     msg.content.ptr = (void *)pkt;
     /* send message */
-    int ret = msg_try_send(&msg, pid);
+    int ret = svc_msg_try_send(&msg, pid);
     if (ret < 1) {
         DEBUG("gnrc_netapi: dropped message to %" PRIkernel_pid " (%s)\n", pid,
               (ret == 0) ? "receiver queue is full" : "invalid receiver");
