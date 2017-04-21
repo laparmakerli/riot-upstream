@@ -55,7 +55,6 @@ struct thread_data {
   }
   std::atomic<unsigned> ref_count;
   kernel_pid_t joining_thread;
-  char stack[stack_size];
 };
 
 /**
@@ -226,8 +225,8 @@ thread::thread(F&& f, Args&&... args)
     <thread_data*, typename decay<F>::type, typename decay<Args>::type...>;
   std::unique_ptr<func_and_args> p(
     new func_and_args(m_data.get(), forward<F>(f), forward<Args>(args)...));
-  m_handle = thread_create(
-    m_data->stack, stack_size, THREAD_PRIORITY_MAIN - 1, 0,
+  m_handle = svc_thread_create(
+    stack_size, THREAD_PRIORITY_MAIN - 1, 0,
     &thread_proxy<func_and_args>, p.get(), "riot_cpp_thread");
   if (m_handle >= 0) {
     p.release();

@@ -28,6 +28,11 @@
 #include "thread.h"
 #include "irq.h"
 #include "log.h"
+#include "memmgmt.h"
+#include <stdio.h>
+#include <protection.h>
+
+
 
 #ifdef MODULE_SCHEDSTATISTICS
 #include "xtimer.h"
@@ -47,6 +52,11 @@ volatile unsigned int sched_context_switch_request;
 
 volatile thread_t *sched_threads[KERNEL_PID_LAST + 1];
 volatile thread_t *sched_active_thread;
+
+
+volatile uintptr_t lower_stack_bound = 0;
+volatile uintptr_t upper_stack_bound = 0xFFFFFFFF;
+
 
 volatile kernel_pid_t sched_active_pid = KERNEL_PID_UNDEF;
 
@@ -114,6 +124,17 @@ int sched_run(void)
     next_thread->status = STATUS_RUNNING;
     sched_active_pid = next_thread->pid;
     sched_active_thread = (volatile thread_t *) next_thread;
+
+    lower_stack_bound = (uintptr_t) next_thread->sp;
+    upper_stack_bound = ((uintptr_t) next_thread->sp) + next_thread->stack_size;
+
+/*  DEBUG
+    printf("SCHED FROM PID: %i\n", sched_active_pid);
+    printf("IN IRQ: %i\n", getInIRQ());
+    printf("IN STACK: %i\n", getInStack());
+    printf("IN STACKS: %i\n", getInStacks());
+    printf("OUTER STACK: %i\n", getOuterStacks());
+*/
 
     DEBUG("sched_run: done, changed sched_active_thread.\n");
 

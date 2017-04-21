@@ -111,7 +111,6 @@ void uhcp_handle_prefix(uint8_t *prefix, uint8_t prefix_len, uint16_t lifetime, 
 
 extern void uhcp_client(uhcp_iface_t iface);
 
-static char _uhcp_client_stack[THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF];
 static msg_t _uhcp_msg_queue[4];
 
 static void* uhcp_client_thread(void *arg)
@@ -134,7 +133,7 @@ void auto_init_gnrc_uhcpc(void)
     }
 
     /* initiate uhcp client */
-    thread_create(_uhcp_client_stack, sizeof(_uhcp_client_stack),
+    svc_thread_create(THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF,
             THREAD_PRIORITY_MAIN - 1, THREAD_CREATE_STACKTEST,
             uhcp_client_thread, NULL, "uhcp");
 }

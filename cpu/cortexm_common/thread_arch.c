@@ -233,6 +233,11 @@ char *thread_arch_stack_init(thread_task_func_t task_func,
     return (char*) stk;
 }
 
+
+
+
+
+
 void thread_arch_stack_print(void)
 {
     int count = 0;
@@ -307,9 +312,9 @@ __attribute__((naked)) void arch_context_switch(void)
     "str    r0, [r1]                  \n" /* write r0 to pdc->sp */
     /* SVC handler entry point */
     /* PendSV will continue from above and through this part as well */
-    ".global isr_svc                  \n"
+    ".global start_threading          \n"
     ".thumb_func                      \n"
-    "isr_svc:                         \n"
+    "start_threading:                 \n"
     /* perform scheduling */
     "bl     sched_run                 \n"
     /* restore context and return from exception */

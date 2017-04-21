@@ -205,12 +205,13 @@ sys_thread_t sys_thread_new(const char *name, lwip_thread_fn thread, void *arg,
                             int stacksize, int prio)
 {
     kernel_pid_t res;
-    char *stack = mem_malloc((size_t)stacksize);
 
     if (stack == NULL) {
         return ERR_MEM;
     }
-    if ((res = thread_create(stack, stacksize, prio, THREAD_CREATE_STACKTEST,
+
+    //  ToDoLars :: svc call hier notwendig?
+    if ((res = svc_thread_create(stacksize, prio, THREAD_CREATE_STACKTEST,
                              (thread_task_func_t)thread, arg, name)) <= KERNEL_PID_UNDEF) {
         abort();
     }

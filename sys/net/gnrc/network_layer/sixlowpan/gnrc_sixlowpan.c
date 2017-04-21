@@ -39,9 +39,9 @@ static gnrc_sixlowpan_msg_frag_t fragment_msg = {KERNEL_PID_UNDEF, NULL, 0, 0};
 #endif
 
 #if ENABLE_DEBUG
-static char _stack[GNRC_SIXLOWPAN_STACK_SIZE + THREAD_EXTRA_STACKSIZE_PRINTF];
+static int stacksize = GNRC_SIXLOWPAN_STACK_SIZE + THREAD_EXTRA_STACKSIZE_PRINTF;
 #else
-static char _stack[GNRC_SIXLOWPAN_STACK_SIZE];
+static int stacksize = GNRC_SIXLOWPAN_STACK_SIZE;
 #endif
 
 
@@ -58,7 +58,7 @@ kernel_pid_t gnrc_sixlowpan_init(void)
         return _pid;
     }
 
-    _pid = thread_create(_stack, sizeof(_stack), GNRC_SIXLOWPAN_PRIO,
+    _pid = svc_thread_create(stacksize, GNRC_SIXLOWPAN_PRIO,
                          THREAD_CREATE_STACKTEST, _event_loop, NULL, "6lo");
 
     return _pid;

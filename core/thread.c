@@ -29,6 +29,9 @@
 #include "debug.h"
 #include "bitarithm.h"
 #include "sched.h"
+#include "memmgmt.h"
+
+
 
 volatile thread_t *thread_get(kernel_pid_t pid)
 {
@@ -140,7 +143,34 @@ uintptr_t thread_measure_stack_free(char *stack)
 }
 #endif
 
-kernel_pid_t thread_create(char *stack, int stacksize, char priority, int flags, thread_task_func_t function, void *arg, const char *name)
+
+
+
+
+
+kernel_pid_t svc_thread_create(int stacksize, char priority, int flags, thread_task_func_t func, void *arg, const char *name){
+    
+    thread_description td;
+    td.stacksize = stacksize;
+    td.priority = priority;
+    td.flags = flags;
+    td.func = func;
+    td.arg = arg;
+    td.name = name;
+
+    kernel_pid_t ret = 0;
+
+    asm volatile("mov r0, %[thread_description]": : [thread_description] "r" (&td));
+    asm volatile("svc #0x2");       /*  call svc    */
+    asm volatile("mov %[ret], r0": [ret] "=r" (ret));
+
+    return ret;
+}
+
+
+
+
+kernel_pid_t thread_create(int stacksize, char priority, int flags, thread_task_func_t function, void *arg, const char *name)
 {
     if (priority >= SCHED_PRIO_LEVELS) {
         return -EINVAL;
@@ -151,6 +181,8 @@ kernel_pid_t thread_create(char *stack, int stacksize, char priority, int flags,
 #else
     (void) name;
 #endif
+
+    char *stack = alloc_block(stacksize);
 
     /* align the stack on a 16/32bit boundary */
     uintptr_t misalignment = (uintptr_t) stack % ALIGN_OF(void *);
@@ -163,7 +195,7 @@ kernel_pid_t thread_create(char *stack, int stacksize, char priority, int flags,
     /* make room for the thread control block */
     stacksize -= sizeof(thread_t);
 
-    /* round down the stacksize to a multiple of thread_t alignments (usually 16/32bit) */
+    /* round down the stacksize to a multiple of thread_t ments (usually 16/32bit) */
     stacksize -= stacksize % ALIGN_OF(thread_t);
 
     if (stacksize < 0) {

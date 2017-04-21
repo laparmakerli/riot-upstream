@@ -42,9 +42,9 @@
 #define _MAX_L2_ADDR_LEN    (8U)
 
 #if ENABLE_DEBUG
-static char _stack[GNRC_IPV6_STACK_SIZE + THREAD_EXTRA_STACKSIZE_PRINTF];
+static int stacksize = GNRC_IPV6_STACK_SIZE + THREAD_EXTRA_STACKSIZE_PRINTF;
 #else
-static char _stack[GNRC_IPV6_STACK_SIZE];
+static int stacksize = GNRC_IPV6_STACK_SIZE;
 #endif
 
 #ifdef MODULE_FIB
@@ -82,7 +82,7 @@ static void _decapsulate(gnrc_pktsnip_t *pkt);
 kernel_pid_t gnrc_ipv6_init(void)
 {
     if (gnrc_ipv6_pid == KERNEL_PID_UNDEF) {
-        gnrc_ipv6_pid = thread_create(_stack, sizeof(_stack), GNRC_IPV6_PRIO,
+        gnrc_ipv6_pid = svc_thread_create(stacksize, GNRC_IPV6_PRIO,
                                       THREAD_CREATE_STACKTEST,
                                       _event_loop, NULL, "ipv6");
     }

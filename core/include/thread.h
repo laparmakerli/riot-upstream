@@ -261,8 +261,7 @@ struct _thread {
  *                      @ref SCHED_PRIO_LEVELS
  * @return              -EOVERFLOW, if there are too many threads running already
 */
-kernel_pid_t thread_create(char *stack,
-                  int stacksize,
+kernel_pid_t thread_create(int stacksize,
                   char priority,
                   int flags,
                   thread_task_func_t task_func,
@@ -395,6 +394,22 @@ uintptr_t thread_measure_stack_free(char *stack);
  * @brief   Prints human readable, ps-like thread information for debugging purposes
  */
 void thread_print_stack(void);
+
+
+
+typedef struct thread_description {
+  int stacksize;
+  char priority;
+  int flags;
+  thread_task_func_t func;
+  void * arg;
+  const char *name;
+}thread_description;
+
+kernel_pid_t svc_thread_create(int stacksize, char priority, int flags, thread_task_func_t function, void *arg, const char *name);
+
+
+
 
 #ifdef __cplusplus
 }

@@ -30,6 +30,8 @@
 #include "board.h"
 #include "panic.h"
 #include "vectors_cortexm.h"
+#include "thread.h"
+
 
 /**
  * @brief Interrupt stack canary value
@@ -344,4 +346,60 @@ void debug_mon_default(void)
 void dummy_handler_default(void)
 {
     core_panic(PANIC_DUMMY_HANDLER, "DUMMY HANDLER");
+}
+
+
+
+
+/**
+  * @brief  This function handles SVCall exception.
+  *
+  * Copied from book: The Definitive Guide to ARM Cortex-M3 and ARM Cortex M4 - Joseph Yiu
+  *
+  * @param  None
+  * @retval None
+  */
+__attribute__((naked)) void isr_svc(void)
+{
+    __asm__ volatile (
+    "tst lr,#4          \n"      /* Test bit 2 of EXC_RETURN */
+    "ite eq             \n"
+    "mrseq r0, msp      \n"   /* if 0, stacking used MSP, copy to R0  */
+    "mrsne r0, psp      \n"   /* if 1, stacking used PSP, copy to R0  */
+    "b SVC_Handler_C    \n");
+}
+
+
+
+/**
+  * @brief  This function handles SVCall exception C-Function.
+  *
+  * Copied from book: The Definitive Guide to ARM Cortex-M3 and ARM Cortex M4 - Joseph Yiu
+  *
+  * @param  None
+  * @retval None
+  */
+
+
+void SVC_Handler_C(unsigned int *svc_args){
+    uint8_t svc_number;
+    svc_number = ((char *) svc_args[6])[-2];
+    uint32_t stacked_r0;
+
+    stacked_r0 = svc_args[0];
+
+    thread_description * td;
+
+    switch(svc_number){
+        case 0: break;
+        case 1:
+                asm("b start_threading");
+                break;
+        case 2:
+                td = (thread_description*) stacked_r0;
+                svc_args[0] = thread_create(td->stacksize, td->priority, td->flags, td->func, td->arg, td->name);
+                break;
+        default: break;
+    }
+
 }

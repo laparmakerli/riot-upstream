@@ -136,8 +136,8 @@ kernel_pid_t gnrc_nomac_init(char *stack, int stacksize, char priority,
     if (dev == NULL || dev->driver == NULL) {
         return -ENODEV;
     }
-    /* create new NOMAC thread */
-    res = thread_create(stack, stacksize, priority, THREAD_CREATE_STACKTEST,
+    /* create new NOMAC thread */    //  ToDoLars:  Stackübergabe vom Caller unterbinden
+    res = svc_thread_create(stacksize, priority, THREAD_CREATE_STACKTEST,
                         _nomac_thread, (void *)dev, name);
     if (res <= 0) {
         return -EINVAL;

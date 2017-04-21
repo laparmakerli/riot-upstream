@@ -164,6 +164,18 @@ extern volatile int sched_num_threads;
  */
 extern volatile kernel_pid_t sched_active_pid;
 
+
+
+
+extern volatile uintptr_t lower_stack_bound;
+
+extern volatile uintptr_t upper_stack_bound;
+
+
+
+
+
+
 /**
  * List of runqueues per priority level
  */

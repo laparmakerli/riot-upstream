@@ -41,7 +41,6 @@ kernel_pid_t gnrc_pktdump_pid = KERNEL_PID_UNDEF;
 /**
  * @brief   Stack for the pktdump thread
  */
-static char _stack[GNRC_PKTDUMP_STACKSIZE];
 
 static void _dump_snip(gnrc_pktsnip_t *pkt)
 {
@@ -157,7 +156,7 @@ static void *_eventloop(void *arg)
 kernel_pid_t gnrc_pktdump_init(void)
 {
     if (gnrc_pktdump_pid == KERNEL_PID_UNDEF) {
-        gnrc_pktdump_pid = thread_create(_stack, sizeof(_stack), GNRC_PKTDUMP_PRIO,
+        gnrc_pktdump_pid = svc_thread_create(GNRC_PKTDUMP_STACKSIZE, GNRC_PKTDUMP_PRIO,
                              THREAD_CREATE_STACKTEST,
                              _eventloop, NULL, "pktdump");
     }
