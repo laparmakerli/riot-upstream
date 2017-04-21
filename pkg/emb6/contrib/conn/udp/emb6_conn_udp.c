@@ -95,7 +95,7 @@ void conn_udp_close(conn_udp_t *conn)
             msg.type = _MSG_TYPE_CLOSE;
             msg.content.ptr = (char *)conn;
             mutex_unlock(&conn->mutex);
-            msg_send(&msg, conn->waiting_thread);
+            svc_msg_send(&msg, conn->waiting_thread);
             mutex_lock(&conn->mutex);
         }
         udp_socket_close(&conn->sock);
@@ -221,7 +221,7 @@ static void _input_callback(struct udp_socket *c, void *ptr,
         msg.type = _MSG_TYPE_RCV;
         msg.content.ptr = (char *)conn;
         mutex_unlock(&conn->mutex);
-        msg_send(&msg, conn->waiting_thread);
+        svc_msg_send(&msg, conn->waiting_thread);
     }
     else {
         mutex_unlock(&conn->mutex);

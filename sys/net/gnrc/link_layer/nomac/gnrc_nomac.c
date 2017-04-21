@@ -69,7 +69,7 @@ static void *_nomac_thread(void *args)
     msg_t msg, reply, msg_queue[GNRC_NOMAC_MSG_QUEUE_SIZE];
 
     /* setup the MAC layers message queue */
-    msg_init_queue(msg_queue, GNRC_NOMAC_MSG_QUEUE_SIZE);
+    svc_msg_init_queue(msg_queue, GNRC_NOMAC_MSG_QUEUE_SIZE);
     /* save the PID to the device descriptor and register the device */
     dev->mac_pid = thread_getpid();
     gnrc_netif_add(dev->mac_pid);

@@ -57,7 +57,7 @@ static inline void gnrc_neterr_report(gnrc_pktsnip_t *pkt, uint32_t err)
         msg.type = GNRC_NETERR_MSG_TYPE;
         msg.content.value = err;
 
-        msg_send(&msg, pkt->err_sub);
+        svc_msg_send(&msg, pkt->err_sub);
     }
 }
 #else

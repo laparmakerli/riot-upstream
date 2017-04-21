@@ -307,7 +307,7 @@ int _icmpv6_ping(int argc, char **argv)
 
                 default:
                     /* requeue wrong packets */
-                    msg_send(&msg, thread_getpid());
+                    svc_msg_send(&msg, thread_getpid());
                     break;
             }
         }

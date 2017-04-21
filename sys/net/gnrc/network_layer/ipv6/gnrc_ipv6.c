@@ -244,7 +244,7 @@ static void *_event_loop(void *args)
     gnrc_netreg_entry_t me_reg;
 
     (void)args;
-    msg_init_queue(msg_q, GNRC_IPV6_MSG_QUEUE_SIZE);
+    svc_msg_init_queue(msg_q, GNRC_IPV6_MSG_QUEUE_SIZE);
 
     me_reg.demux_ctx = GNRC_NETREG_DEMUX_CTX_ALL;
     me_reg.pid = thread_getpid();

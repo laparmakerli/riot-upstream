@@ -218,7 +218,7 @@ static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *arg)
         msg.type = LWIP_NETDEV2_MSG_TYPE_EVENT;
         msg.content.ptr = (char *)dev;
 
-        if (msg_send(&msg, _pid) <= 0) {
+        if (svc_msg_send(&msg, _pid) <= 0) {
             DEBUG("lwip_netdev2: possibly lost interrupt.\n");
         }
     }
@@ -246,7 +246,7 @@ static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *arg)
 static void *_event_loop(void *arg)
 {
     (void)arg;
-    msg_init_queue(_queue, LWIP_NETDEV2_QUEUE_LEN);
+    svc_msg_init_queue(_queue, LWIP_NETDEV2_QUEUE_LEN);
     while (1) {
         msg_t msg;
         msg_receive(&msg);

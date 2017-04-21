@@ -191,7 +191,7 @@ static void *_event_loop(void *args)
     msg_t msg, reply;
 
     (void)args;
-    msg_init_queue(_msg_q, GNRC_RPL_MSG_QUEUE_SIZE);
+    svc_msg_init_queue(_msg_q, GNRC_RPL_MSG_QUEUE_SIZE);
 
     /* preinitialize ACK */
     reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
