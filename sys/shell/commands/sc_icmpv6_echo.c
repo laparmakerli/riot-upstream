@@ -315,7 +315,7 @@ int _icmpv6_ping(int argc, char **argv)
             puts("ping timeout");
         }
 
-        while (msg_try_receive(&msg) > 0) {
+        while (svc_msg_try_receive(&msg) > 0) {
             if (msg.type == GNRC_NETAPI_MSG_TYPE_RCV) {
                 printf("dropping additional response packet (probably caused by duplicates)\n");
                 gnrc_pktsnip_t *pkt = (gnrc_pktsnip_t *)msg.content.ptr;
@@ -339,7 +339,7 @@ int _icmpv6_ping(int argc, char **argv)
     id++;
 
     gnrc_netreg_unregister(GNRC_NETTYPE_ICMPV6, &my_entry);
-    while (msg_try_receive(&msg) > 0) {
+    while (svc_msg_try_receive(&msg) > 0) {
         if (msg.type == GNRC_NETAPI_MSG_TYPE_RCV) {
             printf("dropping additional response packet (probably caused by duplicates)\n");
             gnrc_pktsnip_t *pkt = (gnrc_pktsnip_t *)msg.content.ptr;

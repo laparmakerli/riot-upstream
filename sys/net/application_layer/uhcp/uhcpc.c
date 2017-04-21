@@ -66,9 +66,9 @@ void uhcp_client(uhcp_iface_t iface)
         }
         else {
             msg_t msg;
-            msg_try_receive(&msg);
-            msg_try_receive(&msg);
-            msg_try_receive(&msg);
+            svc_msg_try_receive(&msg);
+            svc_msg_try_receive(&msg);
+            svc_msg_try_receive(&msg);
             puts("uhcp_client(): timeout waiting for reply");
         }
     }
