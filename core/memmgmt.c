@@ -63,9 +63,6 @@ void divide_slot(void* slot,unsigned int  size){
 	slot_to_divide->next_block=new_slot;
 }
 
-/**
- * Extends the heap using sbrk syscall. 
- */
 void init_blocks(void){
 
 	METADATA_SIZE = sizeof(slot_data);
