@@ -112,6 +112,23 @@ void *_sbrk_r(struct _reent *r, ptrdiff_t incr)
 
     irq_restore(state);
     return res;
+
+    // ToDoLars :  Eigener Heap für Interrupt Routinen
+
+    /*
+    unsigned int state = irq_disable();
+    void *res = heap_top;
+
+    if ((heap_top + incr > &_eheap) || (heap_top + incr < &_sheap)) {
+        r->_errno = ENOMEM;
+        res = (void *)-1;
+    }
+    else {
+        heap_top += incr;
+    }
+
+    irq_restore(state);
+    return res;*/
 }
 
 /**
