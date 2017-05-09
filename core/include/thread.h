@@ -72,6 +72,7 @@
  * @brief @c thread_t holds thread's context data.
  */
 struct _thread {
+    char *hp;
     char *sp;                       /**< thread's stack pointer         */
     uint8_t status;                 /**< thread's status                */
     uint8_t priority;               /**< thread's priority              */

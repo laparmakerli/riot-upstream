@@ -22,6 +22,8 @@
 
 #include "shell.h"
 #include "msg.h"
+#include <malloc.h>
+
 
 #define MAIN_QUEUE_SIZE     (8)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
@@ -39,6 +41,16 @@ int main(void)
      * receive potentially fast incoming networking packets */
     svc_msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
     puts("RIOT network stack example application");
+
+    int size = 200;
+    int* arr = (int *) malloc(size);
+
+    int i;
+    for (i = 0; i<size; i++){
+        arr[i] = i;
+        printf("### %i\n", arr[i]);
+    }
+
 
     /* start shell */
     puts("All up, running the shell now");
