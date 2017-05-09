@@ -242,6 +242,8 @@ kernel_pid_t thread_create(int stacksize, char priority, int flags, thread_task_
 
     cb->pid = pid;
     cb->sp = thread_stack_init(function, arg, stack, stacksize);
+    cb->hp = stack;
+
 
 #if defined(DEVELHELP) || defined(SCHED_TEST_STACK)
     cb->stack_start = stack;
