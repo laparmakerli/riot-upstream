@@ -125,8 +125,8 @@ int sched_run(void)
     sched_active_pid = next_thread->pid;
     sched_active_thread = (volatile thread_t *) next_thread;
 
-    lower_stack_bound = (uintptr_t) next_thread->sp;
-    upper_stack_bound = ((uintptr_t) next_thread->sp) + next_thread->stack_size;
+    lower_stack_bound = (uintptr_t) next_thread->stack_start;
+    upper_stack_bound = ((uintptr_t) next_thread->stack_start) + next_thread->stack_size;
 
 /*  DEBUG
     printf("SCHED FROM PID: %i\n", sched_active_pid);
