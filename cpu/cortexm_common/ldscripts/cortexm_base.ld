@@ -31,6 +31,9 @@ OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
 OUTPUT_ARCH(arm)
 SEARCH_DIR(.)
 
+_User_Stack_Size = 0x8000; /* 32kiB User Stack space */
+
+
 /* Section Definitions */
 SECTIONS
 {
@@ -101,6 +104,18 @@ SECTIONS
     . = ALIGN(4);
     _etext = .;
 
+
+    ._user_stack :
+    {
+    . = ALIGN(_User_Stack_Size);
+    PROVIDE (user_stack_start = ABSOLUTE(.));
+    . = . + _User_Stack_Size;
+    . = ALIGN(4);
+    PROVIDE (user_stack_end = ABSOLUTE(.));
+    } > ram
+
+
+
     .relocate : AT (_etext)
     {
         . = ALIGN(4);
@@ -110,6 +125,8 @@ SECTIONS
         . = ALIGN(4);
         _erelocate = .;
     } > ram
+
+
 
     /* .bss section which is used for uninitialized data */
     .bss (NOLOAD) :
