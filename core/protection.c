@@ -5,6 +5,7 @@
 #include "memmgmt.h"
 #include <inttypes.h>
 #include <protection.h>
+#include <sched.h>
 
 
 int in_irq = 0;
@@ -90,6 +91,13 @@ int getOuterStacks(void){
     outer_stacks = 0;
     return tmp;
 }
+
+void __memfault(void){
+    asm("nop");
+}
+
+
+
 
 
 
