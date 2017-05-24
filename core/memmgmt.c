@@ -4,14 +4,6 @@
 unsigned int METADATA_SIZE;
 
 
-char stack_heap[16384];
-
-const uintptr_t lower_stacks_bound = (uintptr_t) &stack_heap[0];
-const uintptr_t upper_stacks_bound = (uintptr_t) &stack_heap[16384];
-
-
-
-
 /**
  * Determines the start of heap.
  */ 
@@ -72,7 +64,7 @@ void init_blocks(void){
         METADATA_SIZE += misalignment;
     }
 
-	heap_start = &stack_heap[0];
+	heap_start = (void *)lower_stacks_bound;
 	int total_size = 16384;
 
 	misalignment = (uintptr_t) heap_start % ALIGN_OF(void *);

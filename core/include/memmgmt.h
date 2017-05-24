@@ -43,8 +43,14 @@ typedef struct meta_data{
 #define MAGIC_NUMBER 0123
 
 
-extern const uintptr_t lower_stacks_bound;
-extern const uintptr_t upper_stacks_bound;
+
+extern const uint32_t user_stack_end;
+extern const uint32_t user_stack_start;
+
+static uint32_t lower_stacks_bound = (uint32_t) &user_stack_start;
+static uint32_t upper_stacks_bound = (uint32_t) &user_stack_end;
+
+
 
 void init_blocks(void);
 
