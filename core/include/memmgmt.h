@@ -52,10 +52,10 @@ static uint32_t upper_stacks_bound = (uint32_t) &user_stack_end;
 
 
 
-void init_blocks(void);
+void init_thread_blocks(void);
 
 
-void* alloc_block(unsigned int  size);
+void* alloc_thread_block(unsigned int  size);
 
 
 void free_block(void* ptr);

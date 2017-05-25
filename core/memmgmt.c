@@ -7,7 +7,7 @@ unsigned int METADATA_SIZE;
 /**
  * Determines the start of heap.
  */ 
-void* heap_start;
+void* thread_heap_start;
 
 
 
@@ -24,7 +24,7 @@ unsigned int align_size(unsigned int size){
  * Goes through the whole heap to find an empty slot.
  */ 
 slot_data* find_slot(unsigned int size){
-	slot_data* iter = (slot_data*)heap_start;
+	slot_data* iter = (slot_data*)thread_heap_start;
 	while(iter){
 		if (iter->available && iter->size>=size){
 			iter->available=false;
@@ -55,7 +55,7 @@ void divide_slot(void* slot,unsigned int  size){
 	slot_to_divide->next_block=new_slot;
 }
 
-void init_blocks(void){
+void init_thread_blocks(void){
 
 	METADATA_SIZE = sizeof(slot_data);
 	uintptr_t misalignment = (uintptr_t) METADATA_SIZE % ALIGN_OF(void *);
@@ -64,23 +64,23 @@ void init_blocks(void){
         METADATA_SIZE += misalignment;
     }
 
-	heap_start = (void *)lower_stacks_bound;
+	thread_heap_start = (void *)lower_stacks_bound;
 	int total_size = 16384;
 
-	misalignment = (uintptr_t) heap_start % ALIGN_OF(void *);
+	misalignment = (uintptr_t) thread_heap_start % ALIGN_OF(void *);
     if (misalignment) {
         misalignment = ALIGN_OF(void *) - misalignment;
-        heap_start += misalignment;
+        thread_heap_start += misalignment;
         total_size -= misalignment;
     }
 
-	slot_data * new_block = (slot_data*) heap_start;
+	slot_data * new_block = (slot_data*) thread_heap_start;
 
 	new_block->size=total_size;
 	new_block->available=true;
 	new_block->next_block=NULL;
-	new_block->start=heap_start + METADATA_SIZE;
-	new_block->end  =heap_start + total_size - 4; 
+	new_block->start=thread_heap_start + METADATA_SIZE;
+	new_block->end  =thread_heap_start + total_size - 4; 
 	new_block->magic_number = MAGIC_NUMBER;
 
 }
@@ -99,7 +99,7 @@ slot_data* get_metadata(void* ptr){
 * Return the pointer to this slot.
 * If no adequately large free slot is available, extend the heap and return the pointer.
 */
-void* alloc_block(unsigned int  size){
+void* alloc_thread_block(unsigned int  size){
 	size = align_size(size);
 
 	void* slot;
@@ -125,10 +125,10 @@ void* alloc_block(unsigned int  size){
  * to be deleted is actually allocated. this is done by using the
  * magic number. Due to lack of time i haven't worked on fragmentation.
  */ 
-void free_block(void* ptr){
+void free_thread_block(void* ptr){
 
-	if (!heap_start) return;
-	if (ptr >= heap_start && ptr < heap_start+16384){
+	if (!thread_heap_start) return;
+	if (ptr >= thread_heap_start && ptr < thread_heap_start+16384){
 		slot_data* ptr_metadata = get_metadata(ptr);
 		if (ptr_metadata->magic_number==MAGIC_NUMBER){
 			ptr_metadata->available=true;
