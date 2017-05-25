@@ -28,6 +28,8 @@
 #include "irq.h"
 #include "log.h"
 #include "memmgmt.h"
+#include "shared_memory.h"
+
 
 #ifdef MODULE_SCHEDSTATISTICS
 #include "sched.h"
@@ -88,7 +90,7 @@ void kernel_init(void)
 {
     (void) irq_disable();
 
-    init_blocks();
+    init_thread_blocks();
 
     svc_thread_create(THREAD_STACKSIZE_IDLE,
             THREAD_PRIORITY_IDLE,

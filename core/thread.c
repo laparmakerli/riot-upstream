@@ -182,7 +182,7 @@ kernel_pid_t thread_create(int stacksize, char priority, int flags, thread_task_
     (void) name;
 #endif
 
-    char *stack = alloc_block(stacksize);
+    char *stack = alloc_thread_block(stacksize);
 
     /* align the stack on a 16/32bit boundary */
     uintptr_t misalignment = (uintptr_t) stack % ALIGN_OF(void *);
