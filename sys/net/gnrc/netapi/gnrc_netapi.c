@@ -22,6 +22,7 @@
 #include "net/gnrc/netreg.h"
 #include "net/gnrc/pktbuf.h"
 #include "net/gnrc/netapi.h"
+#include "shared_memory.h"
 
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
@@ -43,15 +44,15 @@ static inline int _get_set(kernel_pid_t pid, uint16_t type,
 {
     msg_t cmd;
     msg_t ack;
-    gnrc_netapi_opt_t o;
+    gnrc_netapi_opt_t *o =  alloc_shared(sizeof(gnrc_netapi_opt_t));
     /* set ńetapi's option struct */
-    o.opt = opt;
-    o.context = context;
-    o.data = data;
-    o.data_len = data_len;
+    o->opt = opt;
+    o->context = context;
+    o->data = data;
+    o->data_len = data_len;
     /* set outgoing message's fields */
     cmd.type = type;
-    cmd.content.ptr = (void *)&o;
+    cmd.content.ptr = (void *) o;
     /* trigger the netapi */
     svc_msg_send_receive(&cmd, &ack, pid);
     assert(ack.type == GNRC_NETAPI_MSG_TYPE_ACK);
@@ -64,7 +65,12 @@ static inline int _snd_rcv(kernel_pid_t pid, uint16_t type, gnrc_pktsnip_t *pkt)
     msg_t msg;
     /* set the outgoing message's fields */
     msg.type = type;
-    msg.content.ptr = (void *)pkt;
+
+    gnrc_pktsnip_t *shared_pkt = alloc_shared(sizeof(gnrc_pktsnip_t));
+    memcpy((void *) shared_pkt, (void *)pkt, sizeof(gnrc_pktsnip_t));
+
+
+    msg.content.ptr = (void *)shared_pkt;
     /* send message */
     int ret = svc_msg_try_send(&msg, pid);
     if (ret < 1) {

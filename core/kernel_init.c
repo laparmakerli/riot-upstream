@@ -91,6 +91,7 @@ void kernel_init(void)
     (void) irq_disable();
 
     init_thread_blocks();
+    ìnit_shared_blocks();
 
     svc_thread_create(THREAD_STACKSIZE_IDLE,
             THREAD_PRIORITY_IDLE,
