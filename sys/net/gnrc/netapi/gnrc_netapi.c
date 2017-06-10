@@ -48,7 +48,8 @@ static inline int _get_set(kernel_pid_t pid, uint16_t type,
     /* set ńetapi's option struct */
     o->opt = opt;
     o->context = context;
-    o->data = data;
+    o->data = (void *)alloc_shared(data_len);
+    memcpy(o->data, data, data_len);
     o->data_len = data_len;
     /* set outgoing message's fields */
     cmd.type = type;
