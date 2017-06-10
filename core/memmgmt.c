@@ -128,7 +128,7 @@ void* alloc_thread_block(unsigned int  size){
 void free_thread_block(void* ptr){
 
 	if (!thread_heap_start) return;
-	if (ptr >= thread_heap_start && ptr < thread_heap_start+16384){
+	if (ptr >= thread_heap_start && ptr < thread_heap_start+32768){
 		slot_data* ptr_metadata = get_metadata(ptr);
 		if (ptr_metadata->magic_number==MAGIC_NUMBER){
 			ptr_metadata->available=true;

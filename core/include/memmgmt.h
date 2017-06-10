@@ -65,7 +65,7 @@ void init_thread_blocks(void);
 void* alloc_thread_block(unsigned int  size);
 
 
-void free_block(void* ptr);
+void free_thread_block(void* ptr);
 
 
 

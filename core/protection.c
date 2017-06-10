@@ -12,6 +12,7 @@ int in_irq = 0;
 int in_stack = 0;
 int in_code = 0;
 int forbidden[8] = {0,0,0,0,0,0,0,0};
+int rubbish[56];
 
 
 int outer_stacks = 0;
@@ -101,7 +102,12 @@ int getOuterStacks(void){
 }
 
 void __memfault(void){
-    asm volatile("svc #0xb");       /*  call svc    */
+
+    __asm__ volatile (
+    //   "add    sp, #100         \n"       
+    "svc        #0xB              \n"
+    );
+
 }
 
 
