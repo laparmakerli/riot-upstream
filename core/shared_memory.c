@@ -9,7 +9,7 @@ unsigned int SHARED_METADATA_SIZE;
  */ 
 void* shared_heap_start;
 
-char shared[1024];
+char shared[8192];
 
 
 
@@ -67,7 +67,7 @@ void init_shared_blocks(void){
     }
 
 	shared_heap_start = (void *)shared;
-	int total_size = 1024;
+	int total_size = 8192;
 
 	misalignment = (uintptr_t) shared_heap_start % ALIGN_OF(void *);
     if (misalignment) {
@@ -130,7 +130,7 @@ void* alloc_shared(unsigned int  size){
 void free_shared_block(void* ptr){
 
 	if (!shared_heap_start) return;
-	if (ptr >= shared_heap_start && ptr < shared_heap_start+1024){
+	if (ptr >= shared_heap_start && ptr < shared_heap_start+8192){
 		shared_slot_data* ptr_metadata = shared_get_metadata(ptr);
 		if (ptr_metadata->magic_number==SHARED_MAGIC_NUMBER){
 			ptr_metadata->available=true;

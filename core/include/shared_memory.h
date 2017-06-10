@@ -38,7 +38,7 @@ typedef struct shared_meta_data{
 
 
 
-#define SHARED_MEMSIZE 1024
+#define SHARED_MEMSIZE 8192
 #define SHARED_ALIGNMENT_FACTOR 4
 #define SHARED_MAGIC_NUMBER 0123
 
