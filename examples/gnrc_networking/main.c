@@ -42,16 +42,6 @@ int main(void)
     svc_msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
     puts("RIOT network stack example application");
 
-    int size = 200;
-    int* arr = (int *) malloc(size);
-
-    int i;
-    for (i = 0; i<size; i++){
-        arr[i] = i;
-        printf("### %i\n", arr[i]);
-    }
-
-
     /* start shell */
     puts("All up, running the shell now");
     char line_buf[SHELL_DEFAULT_BUFSIZE];
