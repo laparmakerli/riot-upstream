@@ -23,6 +23,7 @@
 #include "shell.h"
 #include "msg.h"
 #include <malloc.h>
+#include "thread.h"
 
 
 #define MAIN_QUEUE_SIZE     (8)
@@ -30,8 +31,38 @@ static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 
 extern int udp_cmd(int argc, char **argv);
 
+int k;
+
+int bar(int j){
+    if (k>100){
+        return k;
+    }
+    return bar(k);
+}
+
+void *thread_handler(void *arg){
+    bar(2);
+    return NULL;
+}
+
+
+int crash_cmd(int argc, char **argv)
+{
+    svc_thread_create(256,
+                    THREAD_PRIORITY_MAIN - 1,
+                    THREAD_CREATE_STACKTEST,
+                    thread_handler,
+                    NULL, "crash_thread");
+
+    return 0;
+}
+
+
+
+
 static const shell_command_t shell_commands[] = {
     { "udp", "send data over UDP and listen on UDP ports", udp_cmd },
+    { "crash", "provoziert einen Stackoverflow", crash_cmd},
     { NULL, NULL, NULL }
 };
 

@@ -289,7 +289,7 @@ void SVC_Handler_C(unsigned int *svc_args){
     switch(svc_number){
         case 0: break;
         case 1: 
-                asm("b start_threading");
+                asm("b isr_start_threading");
                 break;
         case 2: 
                 td = (thread_description*) stacked_r0;
@@ -366,6 +366,8 @@ void thread_arch_stack_print(void)
     printf("current stack size: %i byte\n", count);
 }
 
+
+
 __attribute__((naked)) void NORETURN thread_arch_start_threading(void)
 {
     __asm__ volatile (
@@ -376,6 +378,23 @@ __attribute__((naked)) void NORETURN thread_arch_start_threading(void)
     "b      unreachable%=                 \n" /* loop indefinitely */
     :::);
 }
+
+
+
+__attribute__((naked)) void NORETURN isr_thread_arch_start_threading(void)
+{
+    __asm__ volatile (
+    "bl isr_start_threading               \n"
+    "unreachable%=:                       \n" /* this loop is unreachable */
+    "b      unreachable%=                 \n" /* loop indefinitely */
+    :::);
+}
+
+
+
+
+
+
 
 void thread_arch_yield(void)
 {
@@ -422,9 +441,9 @@ __attribute__((naked)) void arch_context_switch(void)
     "str    r0, [r1]                  \n" /* write r0 to pdc->sp */
     /* SVC handler entry point */
     /* PendSV will continue from above and through this part as well */
-    ".global start_threading          \n"
+    ".global isr_start_threading          \n"
     ".thumb_func                      \n"
-    "start_threading:                 \n"
+    "isr_start_threading:                 \n"
     /* perform scheduling */
     "bl     sched_run                 \n"
     /* restore context and return from exception */

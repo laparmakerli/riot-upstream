@@ -60,7 +60,7 @@ volatile uintptr_t lower_stack_bound  = 0;
 volatile uintptr_t upper_stack_bound  = 0xFFFFFFFF;
 
 
-volatile kernel_pid_t sched_active_pid  __attribute__ ((section ("._kernel_space"))) = KERNEL_PID_UNDEF;
+volatile kernel_pid_t sched_active_pid  = KERNEL_PID_UNDEF;//__attribute__ ((section ("._kernel_space"))) = KERNEL_PID_UNDEF;
 
 clist_node_t sched_runqueues[SCHED_PRIO_LEVELS];
 static uint32_t runqueue_bitcache = 0;
@@ -127,7 +127,7 @@ int sched_run(void)
     sched_active_pid = next_thread->pid;
     sched_active_thread = (volatile thread_t *) next_thread;
 
-    lower_stack_bound = (uintptr_t) next_thread->stack_start;
+    lower_stack_bound = (uintptr_t) next_thread->stack_start + 32;
     upper_stack_bound = ((uintptr_t) next_thread->stack_start) + next_thread->stack_size;
 
 /*  DEBUG
@@ -205,11 +205,20 @@ NORETURN void sched_task_exit(void)
     DEBUG("sched_task_exit: ending thread %" PRIkernel_pid "...\n", sched_active_thread->pid);
 
     (void) irq_disable();
+
+    free_thread_block( (sched_threads[sched_active_pid]->stack_start)-16 );
+
     sched_threads[sched_active_pid] = NULL;
     sched_num_threads--;
 
     sched_set_status((thread_t *)sched_active_thread, STATUS_STOPPED);
 
     sched_active_thread = NULL;
-    cpu_switch_context_exit();
+
+    isr_thread_arch_start_threading();
+
+
+    //cpu_switch_context_exit();
 }
+
+

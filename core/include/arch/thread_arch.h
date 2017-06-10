@@ -68,6 +68,9 @@ void thread_arch_stack_print(void);
  */
 void thread_arch_start_threading(void) NORETURN;
 
+void isr_thread_arch_start_threading(void) NORETURN;
+
+
 /**
  * @brief Pause the current thread and schedule the next pending, if available
  */
