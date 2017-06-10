@@ -319,6 +319,8 @@ void SVC_Handler_C(unsigned int *svc_args){
         case 10: 
                 svc_args[0] = msg_reply((msg_t*)stacked_r0, (msg_t*)stacked_r1);
                 break;
+        case 11:
+                sched_task_exit();
         default: break;
     }
 

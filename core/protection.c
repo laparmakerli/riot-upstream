@@ -101,8 +101,7 @@ int getOuterStacks(void){
 }
 
 void __memfault(void){
-    NVIC->STIR = 45; 
-    asm("nop"); 
+    asm volatile("svc #0xb");       /*  call svc    */
 }
 
 
