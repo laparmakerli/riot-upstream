@@ -107,11 +107,11 @@ SECTIONS
 
     ._user_stack :
     {
-    . = ALIGN(_User_Stack_Size);
-    PROVIDE (user_stack_start = ABSOLUTE(.));
-    . = . + _User_Stack_Size;
-    . = ALIGN(4);
-    PROVIDE (user_stack_end = ABSOLUTE(.));
+        . = ALIGN(4);
+        PROVIDE (user_stack_start = ABSOLUTE(.));
+        . = . + _User_Stack_Size;
+        . = ALIGN(4);
+        PROVIDE (user_stack_end = ABSOLUTE(.));
     } > ram
 
 
@@ -120,6 +120,10 @@ SECTIONS
     {
         . = ALIGN(4);
         _srelocate = .;
+        PROVIDE (kernel_global_start = ABSOLUTE(.));
+        *(._kernel_space);
+        . = ALIGN(4);
+        PROVIDE (kernel_global_end = ABSOLUTE(.));
         *(.ramfunc .ramfunc.*);
         *(.data .data.*);
         . = ALIGN(4);
