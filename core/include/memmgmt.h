@@ -50,6 +50,13 @@ extern const uint32_t user_stack_start;
 static uint32_t lower_stacks_bound = (uint32_t) &user_stack_start;
 static uint32_t upper_stacks_bound = (uint32_t) &user_stack_end;
 
+extern const uint32_t kernel_global_start;
+extern const uint32_t kernel_global_end;
+
+static uint32_t kernel_data_start = (uint32_t) &kernel_global_start;
+static uint32_t kernel_data_end = (uint32_t) &kernel_global_end;
+
+
 
 
 void init_thread_blocks(void);

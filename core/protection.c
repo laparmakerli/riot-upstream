@@ -10,7 +10,8 @@
 
 int in_irq = 0;
 int in_stack = 0;
-int in_stacks[8] = {0,0,0,0,0,0,0,0};
+int in_code = 0;
+int forbidden[8] = {0,0,0,0,0,0,0,0};
 
 
 int outer_stacks = 0;
@@ -25,18 +26,24 @@ void __loadcheck(void* pointer, __int64_t access_size) {
     }
     
     uintptr_t ptr = (uintptr_t) pointer;
+
+    if (ptr < 0x20000000){
+        in_code += 1;
+        return;
+    }
     
     if (ptr < upper_stack_bound && ptr > lower_stack_bound){
         in_stack += 1;
         return;
     }
-    if (ptr < upper_stacks_bound && ptr > lower_stacks_bound){
-        in_stacks[sched_active_pid] += 1;
-        int i = in_stacks[sched_active_pid] % 32;
+
+    if (ptr < upper_stacks_bound){
+        forbidden[sched_active_pid] += 1;
+        int i = forbidden[sched_active_pid] % 32;
         in_stacks_arr[sched_active_pid][i] = (uintptr_t) pointer;
-        asm("nop");
         return;
     }
+
     outer_stacks += 1;
     return;
 }
@@ -54,13 +61,14 @@ void __storecheck(void* pointer, __int64_t access_size) {
         in_stack += 1;
         return;
     }
-    if (ptr < upper_stacks_bound && ptr > lower_stacks_bound){
-        in_stacks[sched_active_pid] += 1;
-        int i = in_stacks[sched_active_pid] % 32;
+
+    if (ptr < kernel_data_end){
+        forbidden[sched_active_pid] += 1;
+        int i = forbidden[sched_active_pid] % 32;
         in_stacks_arr[sched_active_pid][i] = (uintptr_t) pointer;
-        asm("nop");
         return;
     }
+
     outer_stacks += 1;
     return;
 }
@@ -80,8 +88,8 @@ int getInStack(void){
 
 /*
 int getInStacks(){
-    int tmp = in_stacks;
-    in_stacks = 0;
+    int tmp = forbidden;
+    forbidden = 0;
     return tmp;
 }
 */
@@ -93,7 +101,8 @@ int getOuterStacks(void){
 }
 
 void __memfault(void){
-    asm("nop");
+    NVIC->STIR = 45; 
+    asm("nop"); 
 }
 
 
