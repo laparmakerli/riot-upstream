@@ -31,7 +31,6 @@
 #include "sched.h"
 #include "memmgmt.h"
 
-#include "xtimer.h"
 
 
 
@@ -152,7 +151,7 @@ uintptr_t thread_measure_stack_free(char *stack)
 
 kernel_pid_t svc_thread_create(int stacksize, char priority, int flags, thread_task_func_t func, void *arg, const char *name){
     
-    if (irq_is_in()){
+    if (1){
         return thread_create(stacksize, priority, flags, func, arg, name);
     }
 
@@ -179,7 +178,6 @@ kernel_pid_t svc_thread_create(int stacksize, char priority, int flags, thread_t
 
 kernel_pid_t thread_create(int stacksize, char priority, int flags, thread_task_func_t function, void *arg, const char *name)
 {
-    xtimer_usleep(100);
 
     if (priority >= SCHED_PRIO_LEVELS) {
         return -EINVAL;
