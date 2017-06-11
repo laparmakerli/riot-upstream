@@ -150,6 +150,9 @@ uintptr_t thread_measure_stack_free(char *stack)
 
 kernel_pid_t svc_thread_create(int stacksize, char priority, int flags, thread_task_func_t func, void *arg, const char *name){
     
+    return thread_create(stacksize, priority, flags, func, arg, name);
+
+    /*
     thread_description td;
     td.stacksize = stacksize;
     td.priority = priority;
@@ -161,10 +164,10 @@ kernel_pid_t svc_thread_create(int stacksize, char priority, int flags, thread_t
     kernel_pid_t ret = 0;
 
     asm volatile("mov r0, %[thread_description]": : [thread_description] "r" (&td));
-    asm volatile("svc #0x2");       /*  call svc    */
+    asm volatile("svc #0x2");     
     asm volatile("mov %[ret], r0": [ret] "=r" (ret));
 
-    return ret;
+    return ret; */
 }
 
 
