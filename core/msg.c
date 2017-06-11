@@ -417,6 +417,10 @@ void msg_queue_print(void)
 
 void svc_msg_init_queue(msg_t *array, int num)
 {
+    if (irq_is_in()) {
+        return msg_init_queue(array, num);
+    }
+
     asm volatile("mov r1, %[num]": : [num] "r" (num));  /* copy block           */
     asm volatile("mov r0, %[array]": : [array] "r" (array));    /* copy message address */
     asm volatile("svc #0x3");       /*  call svc    */
@@ -424,6 +428,10 @@ void svc_msg_init_queue(msg_t *array, int num)
 
 int svc_msg_try_send(msg_t *m, kernel_pid_t target_pid)
 {
+    if (irq_is_in()) {
+        return msg_try_send(m, target_pid);
+    }
+
     int ret = 0;
     asm volatile("mov r1, %[pid]": : [pid] "r" (target_pid));       /* copy target pid      */
     asm volatile("mov r0, %[message]": : [message] "r" (m));    /* copy message address */
@@ -435,6 +443,10 @@ int svc_msg_try_send(msg_t *m, kernel_pid_t target_pid)
 
 int svc_msg_send(msg_t *m, kernel_pid_t target_pid)
 {
+    if (irq_is_in()) {
+        return msg_send(m, target_pid);
+    }
+
     int ret = 0;
     asm volatile("mov r1, %[pid]": : [pid] "r" (target_pid));       /* copy target pid      */
     asm volatile("mov r0, %[message]": : [message] "r" (m));    /* copy message address */
@@ -446,6 +458,10 @@ int svc_msg_send(msg_t *m, kernel_pid_t target_pid)
 
 int svc_msg_receive(msg_t *m)
 {
+    if (irq_is_in()) {
+        return msg_receive(m);
+    }
+
     int ret = 0;
     asm volatile("mov r0, %[message]": : [message] "r" (m));    /* copy message address */
     asm volatile("svc #0x6");       /*  call svc    */
@@ -456,6 +472,10 @@ int svc_msg_receive(msg_t *m)
 
 int svc_msg_send_to_self(msg_t *m)
 {
+    if (irq_is_in()) {
+        return msg_send_to_self(m);
+    }
+
     int ret = 0;
     asm volatile("mov r0, %[message]": : [message] "r" (m));    /* copy message address */
     asm volatile("svc #0x7");       /*  call svc    */
@@ -466,6 +486,11 @@ int svc_msg_send_to_self(msg_t *m)
 
 int svc_msg_try_receive(msg_t *m)
 {
+
+    if (irq_is_in()) {
+        return msg_try_receive(m);
+    }
+
     int ret = 0;
     asm volatile("mov r0, %[message]": : [message] "r" (m));    /* copy message address */
     asm volatile("svc #0x8");       /*  call svc    */
@@ -476,6 +501,10 @@ int svc_msg_try_receive(msg_t *m)
 
 int svc_msg_send_receive(msg_t *m, msg_t *reply, kernel_pid_t target_pid)
 {
+    if (irq_is_in()) {
+        return msg_send_receive(m, reply, target_pid);
+    }
+
     int ret = 0;
     asm volatile("mov r1, %[rep]": : [rep] "r" (reply));       /* copy target pid      */
     asm volatile("mov r2, %[pid]": : [pid] "r" (target_pid));       /* copy target pid      */
@@ -488,6 +517,10 @@ int svc_msg_send_receive(msg_t *m, msg_t *reply, kernel_pid_t target_pid)
 
 int svc_msg_reply(msg_t *m, msg_t *reply)
 {
+    if (irq_is_in()) {
+        return msg_reply(m, reply);
+    }
+
     int ret = 0;
     asm volatile("mov r1, %[rep]": : [rep] "r" (reply));       /* copy target pid      */
     asm volatile("mov r0, %[message]": : [message] "r" (m));    /* copy message address */
