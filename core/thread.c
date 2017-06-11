@@ -31,6 +31,8 @@
 #include "sched.h"
 #include "memmgmt.h"
 
+#include "xtimer.h"
+
 
 
 volatile thread_t *thread_get(kernel_pid_t pid)
@@ -150,9 +152,11 @@ uintptr_t thread_measure_stack_free(char *stack)
 
 kernel_pid_t svc_thread_create(int stacksize, char priority, int flags, thread_task_func_t func, void *arg, const char *name){
     
-    return thread_create(stacksize, priority, flags, func, arg, name);
+    if (irq_is_in()){
+        return thread_create(stacksize, priority, flags, func, arg, name);
+    }
 
-    /*
+    
     thread_description td;
     td.stacksize = stacksize;
     td.priority = priority;
@@ -167,7 +171,7 @@ kernel_pid_t svc_thread_create(int stacksize, char priority, int flags, thread_t
     asm volatile("svc #0x2");     
     asm volatile("mov %[ret], r0": [ret] "=r" (ret));
 
-    return ret; */
+    return ret; 
 }
 
 
@@ -175,6 +179,8 @@ kernel_pid_t svc_thread_create(int stacksize, char priority, int flags, thread_t
 
 kernel_pid_t thread_create(int stacksize, char priority, int flags, thread_task_func_t function, void *arg, const char *name)
 {
+    xtimer_usleep(100);
+
     if (priority >= SCHED_PRIO_LEVELS) {
         return -EINVAL;
     }
