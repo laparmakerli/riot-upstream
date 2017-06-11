@@ -36,6 +36,7 @@
 #include "net/gnrc/pktbuf.h"
 #include "net/gnrc/netif/hdr.h"
 #include "net/gnrc/sixlowpan/netif.h"
+#include "xtimer.h"
 
 /**
  * @brief   The maximal expected link layer address length in byte
@@ -622,6 +623,7 @@ static int _netif_set_addr(kernel_pid_t dev, netopt_t opt, char *addr_str)
 
 static int _netif_set_state(kernel_pid_t dev, char *state_str)
 {
+
     netopt_state_t state;
 
     if ((strcmp("off", state_str) == 0) || (strcmp("OFF", state_str) == 0)) {
@@ -655,6 +657,9 @@ static int _netif_set_state(kernel_pid_t dev, char *state_str)
     puts("");
 
     return 0;
+
+
+
 }
 
 static int _netif_set_encrypt(kernel_pid_t dev, netopt_t opt, char *encrypt_str)
@@ -1089,6 +1094,7 @@ int _netif_send(int argc, char **argv)
 
 int _netif_config(int argc, char **argv)
 {
+
     if (argc < 2) {
         kernel_pid_t ifs[GNRC_NETIF_NUMOF];
         size_t numof = gnrc_netif_get(ifs);
@@ -1215,5 +1221,19 @@ int _netif_config(int argc, char **argv)
     _add_usage(argv[0]);
     _del_usage(argv[0]);
     _stats_usage(argv[0]);
+
     return 1;
+}
+
+
+int _netif_config_benchmarked(int argc, char **argv){
+    unsigned long start = xtimer_now();
+
+    int res = _netif_config(argc, argv);
+
+    unsigned long end = xtimer_now();
+
+    printf("ifconfig time : %lu\n", start-end);
+
+    return res;
 }

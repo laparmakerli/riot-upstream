@@ -85,6 +85,7 @@ extern int _random_get(int argc, char **argv);
 #endif
 
 #ifdef MODULE_GNRC_NETIF
+extern int _netif_config_benchmarked(int argc, char **argv);
 extern int _netif_config(int argc, char **argv);
 extern int _netif_send(int argc, char **argv);
 #endif
@@ -176,7 +177,7 @@ const shell_command_t _shell_command_list[] = {
     {"lspci", "Lists PCI devices", _x86_lspci},
 #endif
 #ifdef MODULE_GNRC_NETIF
-    {"ifconfig", "Configure network interfaces", _netif_config},
+    {"ifconfig", "Configure network interfaces", _netif_config_benchmarked},
     {"txtsnd", "Sends a custom string as is over the link layer", _netif_send },
 #endif
 #ifdef MODULE_FIB
