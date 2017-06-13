@@ -12,33 +12,40 @@
 int in_irq = 0;
 int in_stack = 0;
 int in_code = 0;
-int forbidden[8] = {0,0,0,0,0,0,0,0};
-int rubbish[56];
-
-
 int outer_stacks = 0;
+int forbidden[8] = {0,0,0,0,0,0,0,0};
 
 uintptr_t in_stacks_arr[8][32];
 
 
 void __loadcheck(void* pointer, __int64_t access_size) {
-    asm("nop");
+
+    /* PRIVILIGED ACCESS - allways allowed */
+
     if (irq_is_in()) {
         in_irq +=1;
         return;
     }
+
+    /* UNPRIVILEGED ACCESS */
     
     uintptr_t ptr = (uintptr_t) pointer;
+
+    // Load access in R3 - allowed
 
     if (ptr < 0x20000000){
         in_code += 1;
         return;
     }
+
+    // Load access in R1 - allowed
     
     if (ptr < upper_stack_bound && ptr > lower_stack_bound){
         in_stack += 1;
         return;
     }
+
+    // Load access in R2 - not allowed 
 
     if (ptr < upper_stacks_bound){
         forbidden[sched_active_pid] += 1;
@@ -47,24 +54,44 @@ void __loadcheck(void* pointer, __int64_t access_size) {
         return;
     }
 
-    outer_stacks += 1;  
+    // Load access in R5 - not allowed
+
+    if (ptr < kernel_st_hp_end && ptr > kernel_st_hp_start){
+        forbidden[sched_active_pid] += 1;
+        int i = forbidden[sched_active_pid] % 32;
+        in_stacks_arr[sched_active_pid][i] = (uintptr_t) pointer;
+        return;
+    }
+
+    // Everything else (R4 or Periphals) - allowed
+
+    outer_stacks += 1; 
+
     return;
 }
 
 
 void __storecheck(void* pointer, __int64_t access_size) {
-    asm("nop");
+
+    /* PRIVILIGED ACCESS - allways allowed */
+
     if (irq_is_in()) {
         in_irq +=1;
         return;
     }
-    
+
+    /* UNPRIVILEGED ACCESS */
+
     uintptr_t ptr = (uintptr_t) pointer;
+
+    // Store access in R1 - allowed
     
     if (ptr < upper_stack_bound && ptr > lower_stack_bound){
         in_stack += 1;
         return;
     }
+
+    // Store access in either R3 or R4 - not allowed
 
     if (ptr < kernel_data_end){
         forbidden[sched_active_pid] += 1;
@@ -73,6 +100,17 @@ void __storecheck(void* pointer, __int64_t access_size) {
         return;
     }
 
+    // Store access in R5 - not allowed
+
+    if (ptr < kernel_st_hp_end && ptr > kernel_st_hp_start){
+        forbidden[sched_active_pid] += 1;
+        int i = forbidden[sched_active_pid] % 32;
+        in_stacks_arr[sched_active_pid][i] = (uintptr_t) pointer;
+        return;
+    }
+
+    // Everything else (R4 or Periphals) - allowed
+
     outer_stacks += 1;  
     return; 
 }
@@ -80,13 +118,17 @@ void __storecheck(void* pointer, __int64_t access_size) {
 
 void __memfault(void){
 
+    /* STACKOVERFLOW DETECTED - SVCall for own exit */
+
     __asm__ volatile (
-    //   "add    sp, #100         \n"       
-    "svc        #0xB              \n"
+    "svc    #0xB    \n"
     );
 
 }
 
-void __attribute__ ((noinline)) forbidden_at_pid(kernel_pid_t pid){
-    printf("forbidden[%i] = %i\n", pid, forbidden[pid]);
-}
+
+
+
+//void __attribute__ ((noinline)) forbidden_at_pid(kernel_pid_t pid){
+//    printf("forbidden[%i] = %i\n", pid, forbidden[pid]);
+//}
