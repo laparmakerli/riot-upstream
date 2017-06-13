@@ -97,7 +97,7 @@ void _exit(int n)
  */
 void *_sbrk_r(struct _reent *r, ptrdiff_t incr)
 {
-    unsigned int state = irq_disable();
+    /*unsigned int state = irq_disable();
     void *res = (void*) sched_threads[sched_active_pid]->hp;
     void *sp = (void*) sched_threads[sched_active_pid]->sp;    //  ToDoLars : Ist SP aktuell?  + Umbenennen Stack
     void *stack_heap_start = (void*) sched_threads[sched_active_pid]->stack_start;   
@@ -111,11 +111,11 @@ void *_sbrk_r(struct _reent *r, ptrdiff_t incr)
     }
 
     irq_restore(state);
-    return res;
+    return res;  */
 
     // ToDoLars :  Eigener Heap für Interrupt Routinen
 
-    /*
+    
     unsigned int state = irq_disable();
     void *res = heap_top;
 
@@ -128,7 +128,7 @@ void *_sbrk_r(struct _reent *r, ptrdiff_t incr)
     }
 
     irq_restore(state);
-    return res;*/
+    return res;
 }
 
 /**
