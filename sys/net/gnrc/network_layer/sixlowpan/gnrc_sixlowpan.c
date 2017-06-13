@@ -23,6 +23,8 @@
 #include "net/gnrc/sixlowpan/iphc.h"
 #include "net/gnrc/sixlowpan/netif.h"
 #include "net/sixlowpan.h"
+#include "shared_memory.h"
+
 
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
@@ -310,16 +312,16 @@ static void _send(gnrc_pktsnip_t *pkt)
 static void *_event_loop(void *args)
 {
     msg_t msg, reply, msg_q[GNRC_SIXLOWPAN_MSG_QUEUE_SIZE];
-    gnrc_netreg_entry_t me_reg;
+    gnrc_netreg_entry_t* me_reg = alloc_shared(sizeof(gnrc_netreg_entry_t));
 
     (void)args;
     svc_msg_init_queue(msg_q, GNRC_SIXLOWPAN_MSG_QUEUE_SIZE);
 
-    me_reg.demux_ctx = GNRC_NETREG_DEMUX_CTX_ALL;
-    me_reg.pid = thread_getpid();
+    me_reg->demux_ctx = GNRC_NETREG_DEMUX_CTX_ALL;
+    me_reg->pid = thread_getpid();
 
     /* register interest in all 6LoWPAN packets */
-    gnrc_netreg_register(GNRC_NETTYPE_SIXLOWPAN, &me_reg);
+    gnrc_netreg_register(GNRC_NETTYPE_SIXLOWPAN, me_reg);
 
     /* preinitialize ACK */
     reply.type = GNRC_NETAPI_MSG_TYPE_ACK;

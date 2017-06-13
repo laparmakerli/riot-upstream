@@ -28,6 +28,8 @@
 #include "net/gnrc/udp.h"
 #include "net/gnrc.h"
 #include "net/inet_csum.h"
+#include "shared_memory.h"
+
 
 
 #define ENABLE_DEBUG    (0)
@@ -214,7 +216,8 @@ static void *_event_loop(void *arg)
     (void)arg;
     msg_t msg, reply;
     msg_t msg_queue[GNRC_UDP_MSG_QUEUE_SIZE];
-    gnrc_netreg_entry_t netreg;
+    gnrc_netreg_entry_t* netreg = alloc_shared(sizeof(gnrc_netreg_entry_t));
+
 
     /* preset reply message */
     reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
@@ -222,9 +225,9 @@ static void *_event_loop(void *arg)
     /* initialize message queue */
     svc_msg_init_queue(msg_queue, GNRC_UDP_MSG_QUEUE_SIZE);
     /* register UPD at netreg */
-    netreg.demux_ctx = GNRC_NETREG_DEMUX_CTX_ALL;
-    netreg.pid = thread_getpid();
-    gnrc_netreg_register(GNRC_NETTYPE_UDP, &netreg);
+    netreg->demux_ctx = GNRC_NETREG_DEMUX_CTX_ALL;
+    netreg->pid = thread_getpid();
+    gnrc_netreg_register(GNRC_NETTYPE_UDP, netreg);
 
     /* dispatch NETAPI messages */
     while (1) {

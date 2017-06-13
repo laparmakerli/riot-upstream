@@ -28,6 +28,7 @@
 #include "net/protnum.h"
 #include "thread.h"
 #include "utlist.h"
+#include "shared_memory.h"
 
 #include "net/gnrc/ipv6/nc.h"
 #include "net/gnrc/ipv6/netif.h"
@@ -241,16 +242,16 @@ static void _dispatch_next_header(gnrc_pktsnip_t *current, gnrc_pktsnip_t *pkt,
 static void *_event_loop(void *args)
 {
     msg_t msg, reply, msg_q[GNRC_IPV6_MSG_QUEUE_SIZE];
-    gnrc_netreg_entry_t me_reg;
+    gnrc_netreg_entry_t* me_reg = alloc_shared(sizeof(gnrc_netreg_entry_t));
 
     (void)args;
     svc_msg_init_queue(msg_q, GNRC_IPV6_MSG_QUEUE_SIZE);
 
-    me_reg.demux_ctx = GNRC_NETREG_DEMUX_CTX_ALL;
-    me_reg.pid = thread_getpid();
+    me_reg->demux_ctx = GNRC_NETREG_DEMUX_CTX_ALL;
+    me_reg->pid = thread_getpid();
 
     /* register interest in all IPv6 packets */
-    gnrc_netreg_register(GNRC_NETTYPE_IPV6, &me_reg);
+    gnrc_netreg_register(GNRC_NETTYPE_IPV6, me_reg);
 
     /* preinitialize ACK */
     reply.type = GNRC_NETAPI_MSG_TYPE_ACK;

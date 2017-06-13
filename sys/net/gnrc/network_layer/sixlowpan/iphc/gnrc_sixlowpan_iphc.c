@@ -27,6 +27,7 @@
 #include "utlist.h"
 #include "net/gnrc/nettype.h"
 #include "net/gnrc/udp.h"
+#include "shared_memory.h"
 
 #include "net/gnrc/sixlowpan/iphc.h"
 
@@ -709,24 +710,24 @@ bool gnrc_sixlowpan_iphc_encode(gnrc_pktsnip_t *pkt)
         }
 
         if ((src_ctx != NULL) || ipv6_addr_is_link_local(&(ipv6_hdr->src))) {
-            eui64_t iid;
-            iid.uint64.u64 = 0;
+            eui64_t* iid = alloc_shared(sizeof(eui64_t));
+            iid->uint64.u64 = 0;
 
             if ((netif_hdr->src_l2addr_len == 2) ||
                 (netif_hdr->src_l2addr_len == 4) ||
                 (netif_hdr->src_l2addr_len == 8)) {
                 /* prefer to create IID from netif header if available */
-                ieee802154_get_iid(&iid, gnrc_netif_hdr_get_src_addr(netif_hdr),
+                ieee802154_get_iid(iid, gnrc_netif_hdr_get_src_addr(netif_hdr),
                                    netif_hdr->src_l2addr_len);
             }
             else {
                 /* but take from driver otherwise */
-                gnrc_netapi_get(netif_hdr->if_pid, NETOPT_IPV6_IID, 0, &iid,
+                gnrc_netapi_get(netif_hdr->if_pid, NETOPT_IPV6_IID, 0, iid,
                                 sizeof(eui64_t));
             }
 
-            if ((ipv6_hdr->src.u64[1].u64 == iid.uint64.u64) ||
-                _context_overlaps_iid(src_ctx, &ipv6_hdr->src, &iid)) {
+            if ((ipv6_hdr->src.u64[1].u64 == iid->uint64.u64) ||
+                _context_overlaps_iid(src_ctx, &ipv6_hdr->src, iid)) {
                 /* 0 bits. The address is derived from link-layer address */
                 iphc_hdr[IPHC2_IDX] |= IPHC_SAC_SAM_L2;
                 addr_comp = true;

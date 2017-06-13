@@ -173,7 +173,7 @@ void gnrc_ndp_internal_send_nbr_adv(kernel_pid_t iface, ipv6_addr_t *tgt, ipv6_a
         uint8_t* l2src = alloc_shared(8 * sizeof(uint8_t));
         size_t l2src_len;
         /* we previously checked if we are the target, so we can take our L2src */
-        l2src_len = _get_l2src(iface, l2src, (8 * sizeof(uint8_t)));
+        l2src_len = _get_l2src(iface, l2src, sizeof(l2src));
 
         if (l2src_len > 0) {
             /* add target address link-layer address option */
@@ -250,7 +250,7 @@ void gnrc_ndp_internal_send_nbr_sol(kernel_pid_t iface, ipv6_addr_t *src, ipv6_a
         src = gnrc_ipv6_netif_find_best_src_addr(iface, tgt, false);
     }
     if (src != NULL) {
-        l2src_len = _get_l2src(iface, l2src, (8 * sizeof(uint8_t)));
+        l2src_len = _get_l2src(iface, l2src, sizeof(l2src));
 
         if (l2src_len > 0) {
             /* add source address link-layer address option */
@@ -268,7 +268,7 @@ void gnrc_ndp_internal_send_nbr_sol(kernel_pid_t iface, ipv6_addr_t *src, ipv6_a
     if (ipv6_iface->flags & GNRC_IPV6_NETIF_FLAGS_SIXLOWPAN) {
         if (l2src_len != sizeof(eui64_t)) {
             l2src_len = (uint16_t)gnrc_netapi_get(iface, NETOPT_ADDRESS_LONG, 0, l2src,
-                                                  (8 * sizeof(uint8_t)));
+                                                  sizeof(l2src));
             if (l2src_len != sizeof(eui64_t)) {
                 DEBUG("ndp internal: can't get EUI-64 of the interface\n");
                 gnrc_pktbuf_release(pkt);
@@ -319,7 +319,7 @@ void gnrc_ndp_internal_send_rtr_sol(kernel_pid_t iface, ipv6_addr_t *dst)
     if ((src = gnrc_ipv6_netif_find_best_src_addr(iface, dst, false)) != NULL) {
         uint8_t* l2src = alloc_shared(8 * sizeof(uint8_t));
         size_t l2src_len;
-        l2src_len = _get_l2src(iface, l2src, (8 * sizeof(uint8_t)));
+        l2src_len = _get_l2src(iface, l2src, sizeof(l2src));
         if (l2src_len > 0) {
             /* add source address link-layer address option */
             pkt = gnrc_ndp_opt_sl2a_build(l2src, l2src_len, NULL);
@@ -536,7 +536,7 @@ void gnrc_ndp_internal_send_rtr_adv(kernel_pid_t iface, ipv6_addr_t *src, ipv6_a
         /* optimization note: MAY also be omitted to facilitate in-bound load balancing over
          * replicated interfaces.
          * source: https://tools.ietf.org/html/rfc4861#section-6.2.3 */
-        l2src_len = _get_l2src(iface, l2src, (8 * sizeof(uint8_t)));
+        l2src_len = _get_l2src(iface, l2src, sizeof(l2src));
         if (l2src_len > 0) {
             /* add source address link-layer address option */
             hdr = gnrc_ndp_opt_sl2a_build(l2src, l2src_len, pkt);
@@ -755,7 +755,7 @@ bool gnrc_ndp_internal_pi_opt_handle(kernel_pid_t iface, uint8_t icmpv6_type,
         return true;
     }
 #endif
-        prefix = gnrc_ipv6_netif_find_addr(iface, &pi_opt->prefix);
+    prefix = gnrc_ipv6_netif_find_addr(iface, &pi_opt->prefix);
     if (((prefix == NULL) ||
          (gnrc_ipv6_netif_addr_get(prefix)->prefix_len != pi_opt->prefix_len)) &&
         (pi_opt->valid_ltime.u32 != 0)) {
@@ -835,7 +835,6 @@ static size_t _get_l2src(kernel_pid_t iface, uint8_t *l2src, size_t l2src_maxlen
 
     return *l2src_len;
 }
-
 
 static gnrc_pktsnip_t *_build_headers(kernel_pid_t iface, gnrc_pktsnip_t *payload,
                                       ipv6_addr_t *dst, ipv6_addr_t *src)

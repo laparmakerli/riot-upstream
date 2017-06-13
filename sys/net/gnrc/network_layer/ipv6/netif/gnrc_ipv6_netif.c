@@ -31,6 +31,7 @@
 #include "net/gnrc/netif/hdr.h"
 #include "net/gnrc/sixlowpan/nd.h"
 #include "net/gnrc/sixlowpan/netif.h"
+#include "shared_memory.h"
 
 #include "net/gnrc/ipv6/netif.h"
 
@@ -52,10 +53,14 @@
 #define RULE_3_PTS          (1)
 
 static gnrc_ipv6_netif_t ipv6_ifs[GNRC_NETIF_NUMOF];
+uint16_t max_frag_size = UINT16_MAX;
+
 
 #if ENABLE_DEBUG
 static char addr_str[IPV6_ADDR_MAX_STR_LEN];
 #endif
+
+
 
 static ipv6_addr_t *_add_addr_to_entry(gnrc_ipv6_netif_t *entry, const ipv6_addr_t *addr,
                                        uint8_t prefix_len, uint8_t flags)
@@ -797,9 +802,9 @@ void gnrc_ipv6_netif_init_by_dev(void)
 
     for (size_t i = 0; i < ifnum; i++) {
         ipv6_addr_t addr;
-        eui64_t iid;
-        uint16_t tmp;
-        gnrc_ipv6_netif_t *ipv6_if = gnrc_ipv6_netif_get(ifs[i]);
+        eui64_t* iid = (eui64_t*) alloc_shared(sizeof(eui64_t));
+        uint16_t* tmp = (uint16_t*) alloc_shared(sizeof(uint16_t));
+        gnrc_ipv6_netif_t* ipv6_if = gnrc_ipv6_netif_get(ifs[i]);
 
         if (ipv6_if == NULL) {
             continue;
@@ -808,13 +813,13 @@ void gnrc_ipv6_netif_init_by_dev(void)
         mutex_lock(&ipv6_if->mutex);
 
 #ifdef MODULE_GNRC_SIXLOWPAN
-        gnrc_nettype_t if_type = GNRC_NETTYPE_UNDEF;
+        gnrc_nettype_t* if_type = (gnrc_nettype_t*) alloc_shared(sizeof(gnrc_nettype_t));
+        *if_type = GNRC_NETTYPE_UNDEF;
 
-        if ((gnrc_netapi_get(ifs[i], NETOPT_PROTO, 0, &if_type,
-                             sizeof(if_type)) != -ENOTSUP) &&
-            (if_type == GNRC_NETTYPE_SIXLOWPAN)) {
+        if ((gnrc_netapi_get(ifs[i], NETOPT_PROTO, 0, if_type,
+                             sizeof(*if_type)) != -ENOTSUP) &&
+            (*if_type == GNRC_NETTYPE_SIXLOWPAN)) {
             uint16_t src_len = 8;
-            uint16_t max_frag_size = UINT16_MAX;
 
             DEBUG("ipv6 netif: Set 6LoWPAN flag\n");
             ipv6_ifs[i].flags |= GNRC_IPV6_NETIF_FLAGS_SIXLOWPAN;
@@ -845,19 +850,19 @@ void gnrc_ipv6_netif_init_by_dev(void)
 #endif
 
         /* set link-local address */
-        if (gnrc_netapi_get(ifs[i], NETOPT_IPV6_IID, 0, &iid,
+        if (gnrc_netapi_get(ifs[i], NETOPT_IPV6_IID, 0, iid,
                             sizeof(eui64_t)) >= 0) {
-            ipv6_addr_set_aiid(&addr, iid.uint8);
+            ipv6_addr_set_aiid(&addr, iid->uint8);
             ipv6_addr_set_link_local_prefix(&addr);
             _add_addr_to_entry(ipv6_if, &addr, 64, 0);
 
         }
 
         /* set link MTU */
-        if ((gnrc_netapi_get(ifs[i], NETOPT_MAX_PACKET_SIZE, 0, &tmp,
+        if ((gnrc_netapi_get(ifs[i], NETOPT_MAX_PACKET_SIZE, 0, tmp,
                              sizeof(uint16_t)) >= 0)) {
-            if (tmp >= IPV6_MIN_MTU) {
-                ipv6_if->mtu = tmp;
+            if (*tmp >= IPV6_MIN_MTU) {
+                ipv6_if->mtu = *tmp;
             }
             /* otherwise leave at GNRC_IPV6_NETIF_DEFAULT_MTU as initialized in
              * gnrc_ipv6_netif_add() */

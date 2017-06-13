@@ -37,11 +37,24 @@
 #include "net/gnrc/netif/hdr.h"
 #include "net/gnrc/sixlowpan/netif.h"
 #include "xtimer.h"
+#include "shared_memory.h"
+
 
 /**
  * @brief   The maximal expected link layer address length in byte
  */
 #define MAX_ADDR_LEN            (8U)
+
+
+uint8_t hwaddr[MAX_ADDR_LEN];
+uint16_t u16;
+int16_t i16;
+uint8_t u8;
+int res;
+netopt_state_t state;
+netopt_enable_t enable = NETOPT_DISABLE;
+
+
 
 /**
  * @brief   The default IPv6 prefix length if not specified.
@@ -89,18 +102,20 @@ const char *_netstats_module_to_str(uint8_t module)
     }
 }
 
+
 static int _netif_stats(kernel_pid_t dev, unsigned module, bool reset)
 {
-    netstats_t *stats;
+    netstats_t** stat_ptr_ptr = alloc_shared(sizeof(sizeof(uintptr_t)));
+
     int res = -ENOTSUP;
 
     if (module == NETSTATS_LAYER2) {
-        res = gnrc_netapi_get(dev, NETOPT_STATS, 0, &stats, sizeof(&stats));
+        res = gnrc_netapi_get(dev, NETOPT_STATS, 0, stat_ptr_ptr, sizeof(stat_ptr_ptr));
     }
 #ifdef MODULE_NETSTATS_IPV6
     else if (module == NETSTATS_IPV6) {
-        stats = gnrc_ipv6_netif_get_stats(dev);
-        if (stats != NULL) {
+        *stat_ptr_ptr = gnrc_ipv6_netif_get_stats(dev);
+        if (*stat_ptr_ptr != NULL) {
             res = 1;
         }
     }
@@ -110,7 +125,7 @@ static int _netif_stats(kernel_pid_t dev, unsigned module, bool reset)
         puts("           Protocol or device doesn't provide statistics.");
     }
     else if (reset) {
-        memset(stats, 0, sizeof(netstats_t));
+        memset(*stat_ptr_ptr, 0, sizeof(netstats_t));
         printf("Reset statistics for module %s!\n", _netstats_module_to_str(module));
     }
     else {
@@ -119,13 +134,13 @@ static int _netif_stats(kernel_pid_t dev, unsigned module, bool reset)
                "            TX packets %u (Multicast: %u)  bytes %u\n"
                "            TX succeeded %u errors %u\n",
                _netstats_module_to_str(module),
-               (unsigned) stats->rx_count,
-               (unsigned) stats->rx_bytes,
-               (unsigned) (stats->tx_unicast_count + stats->tx_mcast_count),
-               (unsigned) stats->tx_mcast_count,
-               (unsigned) stats->tx_bytes,
-               (unsigned) stats->tx_success,
-               (unsigned) stats->tx_failed);
+               (unsigned) (*stat_ptr_ptr)->rx_count,
+               (unsigned) (*stat_ptr_ptr)->rx_bytes,
+               (unsigned) ((*stat_ptr_ptr)->tx_unicast_count + (*stat_ptr_ptr)->tx_mcast_count),
+               (unsigned) (*stat_ptr_ptr)->tx_mcast_count,
+               (unsigned) (*stat_ptr_ptr)->tx_bytes,
+               (unsigned) (*stat_ptr_ptr)->tx_success,
+               (unsigned) (*stat_ptr_ptr)->tx_failed);
         res = 0;
     }
     return res;
@@ -275,13 +290,7 @@ static void _print_netopt_state(netopt_state_t state)
 
 static void _netif_list(kernel_pid_t dev)
 {
-    uint8_t hwaddr[MAX_ADDR_LEN];
-    uint16_t u16;
-    int16_t i16;
-    uint8_t u8;
     int res;
-    netopt_state_t state;
-    netopt_enable_t enable = NETOPT_DISABLE;
     bool linebreak = false;
 
 #ifdef MODULE_GNRC_IPV6_NETIF
