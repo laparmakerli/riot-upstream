@@ -40,7 +40,7 @@ void __loadcheck(void* pointer, __int64_t access_size) {
 
     // Load access in R1 - allowed
     
-    if (ptr < upper_stack_bound && ptr > (lower_stack_bound-32){
+    if (ptr < upper_stack_bound && ptr > (lower_stack_bound-32)){
         in_stack += 1;
         return;
     }
