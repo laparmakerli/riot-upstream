@@ -3,14 +3,9 @@
 #define _PROTECTION_H
 
 
-/*DEBUG*/
+void __attribute__ ((noinline)) forbidden_at_pid(kernel_pid_t pid);
 
-int getInIRQ(void);
 
-int getInStack(void);
-
-int getInStacks(void);
-
-int getOuterStacks(void);
+//void forbidden_at_pid(kernel_pid_t pid);
 
 #endif

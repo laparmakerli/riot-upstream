@@ -8,6 +8,7 @@
 #include <sched.h>
 
 
+/*DEBUG*/
 int in_irq = 0;
 int in_stack = 0;
 int in_code = 0;
@@ -21,6 +22,7 @@ uintptr_t in_stacks_arr[8][32];
 
 
 void __loadcheck(void* pointer, __int64_t access_size) {
+    asm("nop");
     if (irq_is_in()) {
         in_irq +=1;
         return;
@@ -45,12 +47,13 @@ void __loadcheck(void* pointer, __int64_t access_size) {
         return;
     }
 
-    outer_stacks += 1;
+    outer_stacks += 1;  
     return;
 }
 
 
 void __storecheck(void* pointer, __int64_t access_size) {
+    asm("nop");
     if (irq_is_in()) {
         in_irq +=1;
         return;
@@ -70,36 +73,10 @@ void __storecheck(void* pointer, __int64_t access_size) {
         return;
     }
 
-    outer_stacks += 1;
-    return;
+    outer_stacks += 1;  
+    return; 
 }
 
-
-int getInIRQ(void){
-    int tmp = in_irq;
-    in_irq = 0;
-    return tmp;
-}
-
-int getInStack(void){
-    int tmp = in_stack;
-    in_stack = 0;
-    return tmp;
-}
-
-/*
-int getInStacks(){
-    int tmp = forbidden;
-    forbidden = 0;
-    return tmp;
-}
-*/
-
-int getOuterStacks(void){
-    int tmp = outer_stacks;
-    outer_stacks = 0;
-    return tmp;
-}
 
 void __memfault(void){
 
@@ -110,10 +87,6 @@ void __memfault(void){
 
 }
 
-
-
-
-
-
-
-
+void __attribute__ ((noinline)) forbidden_at_pid(kernel_pid_t pid){
+    printf("forbidden[%i] = %i\n", pid, forbidden[pid]);
+}
