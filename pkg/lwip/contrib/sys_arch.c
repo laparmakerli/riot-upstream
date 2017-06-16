@@ -211,7 +211,7 @@ sys_thread_t sys_thread_new(const char *name, lwip_thread_fn thread, void *arg,
     }
 
     //  ToDoLars :: svc call hier notwendig?
-    if ((res = svc_thread_create(stacksize, prio, THREAD_CREATE_STACKTEST,
+    if ((res = thread_create_protected(stacksize, prio, THREAD_CREATE_STACKTEST,
                              (thread_task_func_t)thread, arg, name)) <= KERNEL_PID_UNDEF) {
         abort();
     }
