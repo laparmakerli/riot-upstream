@@ -262,12 +262,38 @@ struct _thread {
  *                      @ref SCHED_PRIO_LEVELS
  * @return              -EOVERFLOW, if there are too many threads running already
 */
-kernel_pid_t thread_create(int stacksize,
+kernel_pid_t thread_create(char* stack, int stacksize,
                   char priority,
                   int flags,
                   thread_task_func_t task_func,
                   void *arg,
                   const char *name);
+
+
+/*
+ *  Creates Thread with protected Stack and Heap Segments
+ *  , which are not accessable to other threads
+ * 
+ * @param[in] stacksize the size of the thread's stack in bytes
+ * @param[in] priority  priority of the new thread, lower mean higher priority
+ * @param[in] flags     optional flags for the creation of the new thread
+ * @param[in] task_func pointer to the code that is executed in the new thread
+ * @param[in] arg       the argument to the function
+ * @param[in] name      a human readable descriptor for the thread
+ *
+ * @return              PID of newly created task on success
+ * @return              -EINVAL, if @p priority is greater than or equal to
+ *                      @ref SCHED_PRIO_LEVELS
+ * @return              -EOVERFLOW, if there are too many threads running already
+*/
+
+kernel_pid_t thread_create_protected(int stacksize, 
+                  char priority, 
+                  int flags, 
+                  thread_task_func_t function, 
+                  void *arg, 
+                  const char *name);
+
 
 /**
  * @brief       Retreive a thread control block by PID.
@@ -398,6 +424,10 @@ void thread_print_stack(void);
 
 
 
+kernel_pid_t thread_create_protected_handler(int stacksize, char priority, int flags, thread_task_func_t function, void *arg, const char *name);
+
+
+
 typedef struct thread_description {
   int stacksize;
   char priority;
@@ -407,7 +437,6 @@ typedef struct thread_description {
   const char *name;
 }thread_description;
 
-kernel_pid_t thread_create_protected(int stacksize, char priority, int flags, thread_task_func_t function, void *arg, const char *name);
 
 
 

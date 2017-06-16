@@ -1,0 +1,23 @@
+
+*** These modified files were found in JOE when it aborted on Sun Jun 11 17:46:04 2017
+*** JOE was aborted because the terminal closed
+
+*** File '/senslab/users/parmaker/RIOT/.git/MERGE_MSG'
+
+
+wq
+
+
+*** File '(Unnamed)'
+/senslab/users/parmaker/RIOT/.git/COMMIT_EDITMSG
+/senslab/users/parmaker/RIOT/.git/MERGE_MSG
+/senslab/users/parmaker/riot-upstream/.git/MERGE_MSG
+/senslab/users/parmaker/riot-upstream/.git/COMMIT_EDITMSG
+/senslab/users/parmaker/RIOT/.git/COMMIT_EDITMSG
+/senslab/users/parmaker/RIOT/.git/MERGE_MSG
+
+*** File '* Startup Log *'
+Processing '/etc/joe/editorrc'...
+Processing '/etc/joe/ftyperc'...
+Finished processing /etc/joe/ftyperc
+Finished processing /etc/joe/editorrc

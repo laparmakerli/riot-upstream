@@ -103,7 +103,7 @@
 /**
  * @brief   Noticeable marker marking the beginning of a stack segment
  *
- * This marker is used e.g. by *thread_arch_start_threading* to identify the
+ * This marker is used e.g. by *thread_arch_startf_threading* to identify the
  * stacks beginning.
  */
 #define STACK_MARKER                (0x77777777)
@@ -293,7 +293,7 @@ void SVC_Handler_C(unsigned int *svc_args){
                 break;
         case 2: 
                 td = (thread_description*) stacked_r0;
-                svc_args[0] = thread_create(td->stacksize, td->priority, td->flags, td->func, td->arg, td->name);
+                svc_args[0] = thread_create_protected_handler(td->stacksize, td->priority, td->flags, td->func, td->arg, td->name);
                 break;
         case 3: 
                 msg_init_queue((msg_t*)stacked_r0, (int32_t) stacked_r1);
@@ -389,8 +389,6 @@ __attribute__((naked)) void NORETURN isr_thread_arch_start_threading(void)
     "b      unreachable%=                 \n" /* loop indefinitely */
     :::);
 }
-
-
 
 
 

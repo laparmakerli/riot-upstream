@@ -146,13 +146,10 @@ uintptr_t thread_measure_stack_free(char *stack)
 
 
 
-
-
-
 kernel_pid_t thread_create_protected(int stacksize, char priority, int flags, thread_task_func_t func, void *arg, const char *name){
     
-    if (1){
-        return thread_create(stacksize, priority, flags, func, arg, name);
+    if (irq_is_in()){
+        return thread_create_protected_handler(stacksize, priority, flags, func, arg, name);
     }
 
     
@@ -176,7 +173,7 @@ kernel_pid_t thread_create_protected(int stacksize, char priority, int flags, th
 
 
 
-kernel_pid_t thread_create(int stacksize, char priority, int flags, thread_task_func_t function, void *arg, const char *name)
+kernel_pid_t thread_create_protected_handler(int stacksize, char priority, int flags, thread_task_func_t function, void *arg, const char *name)
 {
 
     if (priority >= SCHED_PRIO_LEVELS) {
@@ -203,6 +200,125 @@ kernel_pid_t thread_create(int stacksize, char priority, int flags, thread_task_
     stacksize -= sizeof(thread_t);
 
     /* round down the stacksize to a multiple of thread_t ments (usually 16/32bit) */
+    stacksize -= stacksize % ALIGN_OF(thread_t);
+
+    if (stacksize < 0) {
+        DEBUG("thread_create: stacksize is too small!\n");
+    }
+    /* allocate our thread control block at the top of our stackspace */
+    thread_t *cb = (thread_t *) (stack + stacksize);
+
+#if defined(DEVELHELP) || defined(SCHED_TEST_STACK)
+    if (flags & THREAD_CREATE_STACKTEST) {
+        /* assign each int of the stack the value of it's address */
+        uintptr_t *stackmax = (uintptr_t *) (stack + stacksize);
+        uintptr_t *stackp = (uintptr_t *) stack;
+
+        while (stackp < stackmax) {
+            *stackp = (uintptr_t) stackp;
+            stackp++;
+        }
+    }
+    else {
+        /* create stack guard */
+        *(uintptr_t *) stack = (uintptr_t) stack;
+    }
+#endif
+
+    unsigned state = irq_disable();
+
+    kernel_pid_t pid = KERNEL_PID_UNDEF;
+    for (kernel_pid_t i = KERNEL_PID_FIRST; i <= KERNEL_PID_LAST; ++i) {
+        if (sched_threads[i] == NULL) {
+            pid = i;
+            break;
+        }
+    }
+    if (pid == KERNEL_PID_UNDEF) {
+        DEBUG("thread_create(): too many threads!\n");
+
+        irq_restore(state);
+
+        return -EOVERFLOW;
+    }
+
+    sched_threads[pid] = cb;
+
+    cb->pid = pid;
+    cb->sp = thread_stack_init(function, arg, stack, stacksize);
+    cb->hp = stack;
+
+
+#if defined(DEVELHELP) || defined(SCHED_TEST_STACK)
+    cb->stack_start = stack;
+#endif
+
+#ifdef DEVELHELP
+    cb->stack_size = total_stacksize;
+    cb->name = name;
+#endif
+
+    cb->priority = priority;
+    cb->status = 0;
+
+    cb->rq_entry.next = NULL;
+
+#ifdef MODULE_CORE_MSG
+    cb->wait_data = NULL;
+    cb->msg_waiters.next = NULL;
+    cib_init(&(cb->msg_queue), 0);
+    cb->msg_array = NULL;
+#endif
+
+    sched_num_threads++;
+
+    DEBUG("Created thread %s. PID: %" PRIkernel_pid ". Priority: %u.\n", name, cb->pid, priority);
+
+    if (flags & THREAD_CREATE_SLEEPING) {
+        sched_set_status(cb, STATUS_SLEEPING);
+    }
+    else {
+        sched_set_status(cb, STATUS_PENDING);
+
+        if (!(flags & THREAD_CREATE_WOUT_YIELD)) {
+            irq_restore(state);
+            sched_switch(priority);
+            return pid;
+        }
+    }
+
+    irq_restore(state);
+
+    return pid;
+}
+
+
+
+
+kernel_pid_t thread_create(char *stack, int stacksize, char priority, int flags, thread_task_func_t function, void *arg, const char *name)
+{
+    if (priority >= SCHED_PRIO_LEVELS) {
+        return -EINVAL;
+    }
+
+#ifdef DEVELHELP
+    int total_stacksize = stacksize;
+#else
+    (void) name;
+#endif
+
+    /* align the stack on a 16/32bit boundary */
+    uintptr_t misalignment = (uintptr_t) stack % ALIGN_OF(void *);
+    if (misalignment) {
+        misalignment = ALIGN_OF(void *) - misalignment;
+        stack += misalignment;
+        stacksize -= misalignment;
+    }
+
+    /* make room for the thread control block */
+    stacksize -= sizeof(thread_t);
+
+    /* round down the stacksize to a multiple of thread_t alignments (usually 16/32bit) */
     stacksize -= stacksize % ALIGN_OF(thread_t);
 
     if (stacksize < 0) {
