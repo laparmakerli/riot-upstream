@@ -94,7 +94,7 @@ kernel_pid_t nhdp_start(void)
         /* Init destination address for NHDP's packets */
 
         /* Start the NHDP thread */
-        nhdp_pid = svc_thread_create(NHDP_STACK_SIZE, THREAD_PRIORITY_MAIN - 1,
+        nhdp_pid = thread_create_protected(NHDP_STACK_SIZE, THREAD_PRIORITY_MAIN - 1,
                                  THREAD_CREATE_STACKTEST, _nhdp_runner, NULL, "NHDP");
 
 #if (NHDP_METRIC_NEEDS_TIMER)
@@ -196,7 +196,7 @@ int nhdp_register_if(kernel_pid_t if_pid, uint8_t *addr, size_t addr_size, uint8
     helper_pid = if_pid;
 
     /* Start the receiving thread */
-    nhdp_rcv_pid = svc_thread_create(NHDP_STACK_SIZE, THREAD_PRIORITY_MAIN - 1,
+    nhdp_rcv_pid = thread_create_protected(NHDP_STACK_SIZE, THREAD_PRIORITY_MAIN - 1,
                                  THREAD_CREATE_STACKTEST, _nhdp_receiver, NULL, "nhdp_rcv_thread");
 
     /* Start sending periodic HELLO */

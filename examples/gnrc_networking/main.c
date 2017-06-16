@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2015 Freie Universität Berlin
  *
@@ -48,7 +49,7 @@ void *thread_handler(void *arg){
 
 int crash_cmd(int argc, char **argv)
 {
-    svc_thread_create(256,
+    thread_create_protected(256,
                     THREAD_PRIORITY_MAIN - 1,
                     THREAD_CREATE_STACKTEST,
                     thread_handler,

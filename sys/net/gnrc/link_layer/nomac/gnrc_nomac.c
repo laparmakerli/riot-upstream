@@ -137,7 +137,7 @@ kernel_pid_t gnrc_nomac_init(char *stack, int stacksize, char priority,
         return -ENODEV;
     }
     /* create new NOMAC thread */    //  ToDoLars:  Stackübergabe vom Caller unterbinden
-    res = svc_thread_create(stacksize, priority, THREAD_CREATE_STACKTEST,
+    res = thread_create_protected(stacksize, priority, THREAD_CREATE_STACKTEST,
                         _nomac_thread, (void *)dev, name);
     if (res <= 0) {
         return -EINVAL;

@@ -267,7 +267,7 @@ kernel_pid_t gnrc_slip_init(gnrc_slip_dev_t *dev, uart_t uart, uint32_t baudrate
 
     /* start SLIP thread */     //  ToDoLars :: Stackübergabe vom Caller unterbinden
     DEBUG("slip: starting SLIP thread\n");    
-    pid = svc_thread_create(stack_size, priority, THREAD_CREATE_STACKTEST,
+    pid = thread_create_protected(stack_size, priority, THREAD_CREATE_STACKTEST,
                         _slip, dev, _SLIP_NAME);
     if (pid < 0) {
         DEBUG("slip: unable to create SLIP thread\n");

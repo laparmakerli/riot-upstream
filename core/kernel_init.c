@@ -93,12 +93,12 @@ void kernel_init(void)
     init_thread_blocks();
     init_shared_blocks();
 
-    svc_thread_create(THREAD_STACKSIZE_IDLE,
+    thread_create_protected(THREAD_STACKSIZE_IDLE,
             THREAD_PRIORITY_IDLE,
             THREAD_CREATE_WOUT_YIELD | THREAD_CREATE_STACKTEST,
             idle_thread, NULL, idle_name);
 
-    svc_thread_create(THREAD_STACKSIZE_MAIN,
+    thread_create_protected(THREAD_STACKSIZE_MAIN,
             THREAD_PRIORITY_MAIN,
             THREAD_CREATE_WOUT_YIELD | THREAD_CREATE_STACKTEST,
             main_trampoline, NULL, main_name);

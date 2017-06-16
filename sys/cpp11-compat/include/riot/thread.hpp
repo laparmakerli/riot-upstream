@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2015 Hamburg University of Applied Sciences (HAW)
  *
@@ -225,7 +226,7 @@ thread::thread(F&& f, Args&&... args)
     <thread_data*, typename decay<F>::type, typename decay<Args>::type...>;
   std::unique_ptr<func_and_args> p(
     new func_and_args(m_data.get(), forward<F>(f), forward<Args>(args)...));
-  m_handle = svc_thread_create(
+  m_handle = thread_create_protected(
     stack_size, THREAD_PRIORITY_MAIN - 1, 0,
     &thread_proxy<func_and_args>, p.get(), "riot_cpp_thread");
   if (m_handle >= 0) {

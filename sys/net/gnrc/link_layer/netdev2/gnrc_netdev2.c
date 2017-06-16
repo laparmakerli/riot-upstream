@@ -193,7 +193,7 @@ kernel_pid_t gnrc_netdev2_init(char *stack, int stacksize, char priority,
     }
 
     /* create new gnrc_netdev2 thread */   // ToDoLars :   Stackübergabe vom Caller unterbinden
-    res = svc_thread_create(stacksize, priority, THREAD_CREATE_STACKTEST,
+    res = thread_create_protected(stacksize, priority, THREAD_CREATE_STACKTEST,
                          _gnrc_netdev2_thread, (void *)gnrc_netdev2, name);
     if (res <= 0) {
         return -EINVAL;

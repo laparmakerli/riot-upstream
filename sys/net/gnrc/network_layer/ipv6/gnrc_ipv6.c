@@ -83,7 +83,7 @@ static void _decapsulate(gnrc_pktsnip_t *pkt);
 kernel_pid_t gnrc_ipv6_init(void)
 {
     if (gnrc_ipv6_pid == KERNEL_PID_UNDEF) {
-        gnrc_ipv6_pid = svc_thread_create(stacksize, GNRC_IPV6_PRIO,
+        gnrc_ipv6_pid = thread_create_protected(stacksize, GNRC_IPV6_PRIO,
                                       THREAD_CREATE_STACKTEST,
                                       _event_loop, NULL, "ipv6");
     }

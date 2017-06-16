@@ -407,7 +407,7 @@ typedef struct thread_description {
   const char *name;
 }thread_description;
 
-kernel_pid_t svc_thread_create(int stacksize, char priority, int flags, thread_task_func_t function, void *arg, const char *name);
+kernel_pid_t thread_create_protected(int stacksize, char priority, int flags, thread_task_func_t function, void *arg, const char *name);
 
 
 

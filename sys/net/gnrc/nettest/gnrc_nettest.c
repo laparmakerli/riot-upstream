@@ -185,7 +185,7 @@ gnrc_nettest_res_t gnrc_nettest_set(kernel_pid_t pid, netopt_t opt,
 int gnrc_nettest_init(void)
 {
     if (_pid <= KERNEL_PID_UNDEF) {
-        _pid = svc_thread_create(GNRC_NETTEST_STACK_SIZE, GNRC_NETTEST_PRIO,
+        _pid = thread_create_protected(GNRC_NETTEST_STACK_SIZE, GNRC_NETTEST_PRIO,
                              THREAD_CREATE_STACKTEST,
                              _event_loop, NULL, "nettest");
     }

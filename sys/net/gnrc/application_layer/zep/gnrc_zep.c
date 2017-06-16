@@ -160,7 +160,7 @@ kernel_pid_t gnrc_zep_init(gnrc_zep_t *dev, uint16_t src_port, ipv6_addr_t *dst,
     dev->version = 2;
     dev->lqi_mode = 1;
 
-    _pid = svc_thread_create(GNRC_ZEP_STACK_SIZE, GNRC_ZEP_PRIO,
+    _pid = thread_create_protected(GNRC_ZEP_STACK_SIZE, GNRC_ZEP_PRIO,
                          THREAD_CREATE_STACKTEST, _event_loop, dev, "zep_app");
 
     DEBUG("zep: started thread with PID %" PRIkernel_pid "\n", _pid);

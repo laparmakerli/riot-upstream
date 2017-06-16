@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2016 Kaspar Schleiser <kaspar@schleiser.de>
  *
@@ -133,7 +134,7 @@ void auto_init_gnrc_uhcpc(void)
     }
 
     /* initiate uhcp client */
-    svc_thread_create(THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF,
+    thread_create_protected(THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF,
             THREAD_PRIORITY_MAIN - 1, THREAD_CREATE_STACKTEST,
             uhcp_client_thread, NULL, "uhcp");
 }

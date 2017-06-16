@@ -53,7 +53,7 @@ kernel_pid_t gnrc_rpl_init(kernel_pid_t if_pid)
     if (gnrc_rpl_pid == KERNEL_PID_UNDEF) {
         _instance_id = 0;
         /* start the event loop */
-        gnrc_rpl_pid = svc_thread_create(GNRC_RPL_STACK_SIZE, GNRC_RPL_PRIO,
+        gnrc_rpl_pid = thread_create_protected(GNRC_RPL_STACK_SIZE, GNRC_RPL_PRIO,
                                      THREAD_CREATE_STACKTEST,
                                      _event_loop, NULL, "RPL");
 

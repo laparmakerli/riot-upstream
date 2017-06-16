@@ -298,7 +298,7 @@ int gnrc_udp_init(void)
     /* check if thread is already running */
     if (_pid == KERNEL_PID_UNDEF) {
         /* start UDP thread */
-        _pid = svc_thread_create(stacksize, GNRC_UDP_PRIO,
+        _pid = thread_create_protected(stacksize, GNRC_UDP_PRIO,
                              THREAD_CREATE_STACKTEST, _event_loop, NULL, "udp");
     }
     return _pid;

@@ -60,7 +60,7 @@ kernel_pid_t gnrc_sixlowpan_init(void)
         return _pid;
     }
 
-    _pid = svc_thread_create(stacksize, GNRC_SIXLOWPAN_PRIO,
+    _pid = thread_create_protected(stacksize, GNRC_SIXLOWPAN_PRIO,
                          THREAD_CREATE_STACKTEST, _event_loop, NULL, "6lo");
 
     return _pid;
