@@ -24,7 +24,7 @@
 #include "net/gnrc/netapi.h"
 #include "shared_memory.h"
 
-#define ENABLE_DEBUG    (1)
+#define ENABLE_DEBUG    (0)
 #include "debug.h"
 
 /**
@@ -42,7 +42,7 @@ static inline int _get_set(kernel_pid_t pid, uint16_t type,
                            netopt_t opt, uint16_t context,
                            void *data, size_t data_len)
 {
-    DEBUG("Data Pointer _get_set :: %p\n\n\n\n\n\n", data);
+    DEBUG("Data Pointer _get_set :: %p\n\n", data);
     msg_t cmd;
     msg_t ack;
     gnrc_netapi_opt_t* o = alloc_shared(sizeof(gnrc_netapi_opt_t));
@@ -50,7 +50,7 @@ static inline int _get_set(kernel_pid_t pid, uint16_t type,
     o->opt = opt;
     o->context = context;
     o->data = data;    
-    DEBUG("Data Pointer _get_set :: %p\n\n\n\n\n\n", data);
+    DEBUG("Data Pointer _get_set :: %p\n", data);
 
     o->data_len = data_len;
     /* set outgoing message's fields */
