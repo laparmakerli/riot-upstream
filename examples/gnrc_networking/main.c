@@ -25,6 +25,16 @@
 #include "msg.h"
 #include <malloc.h>
 #include "thread.h"
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <time.h>
+#include <sys/types.h>
+
+#include <unistd.h>
+
+
 
 
 #define MAIN_QUEUE_SIZE     (8)
@@ -32,29 +42,58 @@ static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 
 extern int udp_cmd(int argc, char **argv);
 
+char stack_arr[256];
+
+uintptr_t arb_pointer;
 int k;
 
-int bar(int j){
+int __attribute__ ((noinline))  stack_overflow(int j){
+    //volatile int arr[16];
     if (k>100){
         return k;
     }
-    return bar(k);
+    return stack_overflow(k);
+}
+
+int __attribute__ ((noinline))  load_from(int j){
+    int *ptr = (int*) arb_pointer;
+    *ptr = 10;
+    return 0;
+
+}
+
+int __attribute__ ((noinline))  store_into(int j){
+    int *ptr = (int*) arb_pointer;
+    *ptr = 10;
+    return 0;
 }
 
 void *thread_handler(void *arg){
-    bar(2);
+    if (strcmp("stackoverflow", arg)==0){
+        stack_overflow(2);
+    } else
+    if (strcmp("load", arg)==0){
+        stack_overflow(2);
+    } else
+    if (strcmp("store", arg)==0){
+        stack_overflow(2);
+    }
+
     return NULL;
 }
 
 
 int crash_cmd(int argc, char **argv)
 {
+    if (strcmp("load", argv[0])==0 || strcmp("store1", argv[0])==0){
+        arb_pointer = atoi(argv[1]);
+    }
+
     thread_create_protected(256,
                     THREAD_PRIORITY_MAIN - 1,
                     THREAD_CREATE_STACKTEST,
                     thread_handler,
-                    NULL, "crash_thread");
-
+                    argv[0], "crash_thread");
     return 0;
 }
 
@@ -63,7 +102,9 @@ int crash_cmd(int argc, char **argv)
 
 static const shell_command_t shell_commands[] = {
     { "udp", "send data over UDP and listen on UDP ports", udp_cmd },
-    { "crash", "provoziert einen Stackoverflow", crash_cmd},
+    { "stackoverflow", "provoke stack overflwo", crash_cmd},
+    { "load", "load from arbitrary address", crash_cmd},
+    { "store", "store to arbitrary address", crash_cmd},
     { NULL, NULL, NULL }
 };
 
