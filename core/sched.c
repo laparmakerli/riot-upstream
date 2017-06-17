@@ -56,11 +56,11 @@ volatile thread_t *sched_threads[KERNEL_PID_LAST + 1];
 volatile thread_t *sched_active_thread;
 
 
-volatile uintptr_t lower_stack_bound  = 0;
-volatile uintptr_t upper_stack_bound  = 0xFFFFFFFF;
+volatile uintptr_t lower_stack_bound __attribute__ ((section ("._kernel_space"))) = 0;
+volatile uintptr_t upper_stack_bound __attribute__ ((section ("._kernel_space"))) = 0xFFFFFFFF;
 
 
-volatile kernel_pid_t sched_active_pid  = KERNEL_PID_UNDEF;//__attribute__ ((section ("._kernel_space"))) = KERNEL_PID_UNDEF;
+volatile kernel_pid_t sched_active_pid __attribute__ ((section ("._kernel_space"))) = KERNEL_PID_UNDEF;
 
 clist_node_t sched_runqueues[SCHED_PRIO_LEVELS];
 static uint32_t runqueue_bitcache = 0;
