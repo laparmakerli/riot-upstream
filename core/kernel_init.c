@@ -88,7 +88,7 @@ const char *idle_name = "idle";
 
 void kernel_init(void)
 {
-    (void) irq_disable();
+    //(void) irq_disable();
 
     init_thread_blocks();
     init_shared_blocks();
