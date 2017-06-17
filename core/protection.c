@@ -16,7 +16,7 @@ int outer_stacks = 0;
 int forbidden[8] = {0,0,0,0,0,0,0,0};
 
 uintptr_t in_stacks_arr[8][32];
-
+void __stackoverflow(void);
 
 void __loadcheck(void* pointer, __int64_t access_size) {
 
@@ -80,9 +80,18 @@ void __storecheck(void* pointer, __int64_t access_size) {
         return;
     }
 
+
     /* UNPRIVILEGED ACCESS */
 
     uintptr_t ptr = (uintptr_t) pointer;
+
+
+    // Load access in R3 - allowed
+
+    if (ptr < 0x20000000){
+        __stackoverflow();
+    }
+
 
     // Store access in R1 - allowed
     
@@ -116,7 +125,7 @@ void __storecheck(void* pointer, __int64_t access_size) {
 }
 
 
-void __memfault(void){
+void __stackoverflow(void){
 
     /* STACKOVERFLOW DETECTED - SVCall for own exit */
 
@@ -128,7 +137,3 @@ void __memfault(void){
 
 
 
-
-//void __attribute__ ((noinline)) forbidden_at_pid(kernel_pid_t pid){
-//    printf("forbidden[%i] = %i\n", pid, forbidden[pid]);
-//}
