@@ -30,6 +30,7 @@
 #include "thread.h"
 #include "utlist.h"
 #include "xtimer.h"
+#include "shared_memory.h"
 
 static uint16_t id = 0x53;
 static uint16_t min_seq_expected = 0;
@@ -153,8 +154,14 @@ int _icmpv6_ping(int argc, char **argv)
     ipv6_addr_t addr;
     kernel_pid_t src_iface;
     msg_t msg;
-    gnrc_netreg_entry_t *ipv6_entry, my_entry = { NULL, ICMPV6_ECHO_REP,
-                                                  thread_getpid() };
+
+    gnrc_netreg_entry_t tmp = { NULL, ICMPV6_ECHO_REP, thread_getpid() };
+    gnrc_netreg_entry_t *ipv6_entry = alloc_shared(sizeof(gnrc_netreg_entry_t));
+    gnrc_netreg_entry_t *my_entry = alloc_shared(sizeof(gnrc_netreg_entry_t));
+
+    memcpy(ipv6_entry, &tmp, sizeof(gnrc_netreg_entry_t));
+    memcpy(my_entry, &tmp, sizeof(gnrc_netreg_entry_t));
+
     uint32_t min_rtt = UINT32_MAX, max_rtt = 0;
     uint64_t sum_rtt = 0;
     uint64_t ping_start;
@@ -226,7 +233,7 @@ int _icmpv6_ping(int argc, char **argv)
         }
     }
 
-    if (gnrc_netreg_register(GNRC_NETTYPE_ICMPV6, &my_entry) < 0) {
+    if (gnrc_netreg_register(GNRC_NETTYPE_ICMPV6, my_entry) < 0) {
         puts("error: network registry is full");
         return 1;
     }
@@ -338,7 +345,7 @@ int _icmpv6_ping(int argc, char **argv)
     max_seq_expected = 0;
     id++;
 
-    gnrc_netreg_unregister(GNRC_NETTYPE_ICMPV6, &my_entry);
+    gnrc_netreg_unregister(GNRC_NETTYPE_ICMPV6, my_entry);
     while (svc_msg_try_receive(&msg) > 0) {
         if (msg.type == GNRC_NETAPI_MSG_TYPE_RCV) {
             printf("dropping additional response packet (probably caused by duplicates)\n");
