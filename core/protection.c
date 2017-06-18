@@ -43,6 +43,9 @@ void __loadcheck(void* pointer, __int64_t access_size) {
     // Load access in R2 - not allowed 
 
     if (ptr < upper_stacks_bound){
+        if (sched_active_pid == 0){
+            return;
+        }
         forbidden[sched_active_pid] += 1;
         __loadfault();
         return;
@@ -51,8 +54,11 @@ void __loadcheck(void* pointer, __int64_t access_size) {
     // Load access in R5 - not allowed
 
     if (ptr < kernel_st_hp_end && ptr > kernel_st_hp_start){
+        if (sched_active_pid == 0){
+            return;
+        }
         forbidden[sched_active_pid] += 1;
-        //__loadfault();
+        __loadfault();
         return;
     }
 
@@ -92,6 +98,9 @@ void __storecheck(void* pointer, __int64_t access_size) {
     // Store access in either R3 or R4 - not allowed
 
     if (ptr < kernel_data_end){
+        if (sched_active_pid == 0){
+            return;
+        }
         forbidden[sched_active_pid] += 1;
         __storefault();
         return;
@@ -100,8 +109,11 @@ void __storecheck(void* pointer, __int64_t access_size) {
     // Store access in R5 - not allowed
 
     if (ptr < kernel_st_hp_end && ptr > kernel_st_hp_start){
+        if (sched_active_pid == 0){
+            return;
+        }
         forbidden[sched_active_pid] += 1;
-        //__storefault();
+        __storefault();
         return;
     }
 
