@@ -56,10 +56,8 @@ int __attribute__ ((noinline))  stack_overflow(int j){
 }
 
 int __attribute__ ((noinline))  load_from(int j){
-    int *ptr = (int*) arb_pointer;
-    *ptr = 10;
-    return 0;
-
+    int res = *((int*) arb_pointer);
+    return res;
 }
 
 int __attribute__ ((noinline))  store_into(int j){
@@ -73,10 +71,10 @@ void *thread_handler(void *arg){
         stack_overflow(2);
     } else
     if (strcmp("load", arg)==0){
-        stack_overflow(2);
+        load_from(2);
     } else
     if (strcmp("store", arg)==0){
-        stack_overflow(2);
+        store_into(2);
     }
 
     return NULL;
@@ -85,7 +83,7 @@ void *thread_handler(void *arg){
 
 int crash_cmd(int argc, char **argv)
 {
-    if (strcmp("load", argv[0])==0 || strcmp("store1", argv[0])==0){
+    if (strcmp("load", argv[0])==0 || strcmp("store", argv[0])==0){
         arb_pointer = atoi(argv[1]);
     }
 
