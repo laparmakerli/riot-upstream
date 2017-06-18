@@ -9,21 +9,18 @@
 
 
 /*DEBUG*/
-int in_irq = 0;
-int in_stack = 0;
-int in_code = 0;
-int outer_stacks = 0;
 int forbidden[8] = {0,0,0,0,0,0,0,0};
 
-uintptr_t in_stacks_arr[8][32];
 void __stackoverflow(void);
+void __loadfault(void);
+void __storefault(void);
+void __irqfault(void);
 
 void __loadcheck(void* pointer, __int64_t access_size) {
 
     /* PRIVILIGED ACCESS - allways allowed */
 
     if (irq_is_in()) {
-        in_irq +=1;
         return;
     }
 
@@ -34,14 +31,12 @@ void __loadcheck(void* pointer, __int64_t access_size) {
     // Load access in R3 - allowed
 
     if (ptr < 0x20000000){
-        in_code += 1;
         return;
     }
 
     // Load access in R1 - allowed
     
     if (ptr < upper_stack_bound && ptr > (lower_stack_bound-32)){
-        in_stack += 1;
         return;
     }
 
@@ -49,8 +44,7 @@ void __loadcheck(void* pointer, __int64_t access_size) {
 
     if (ptr < upper_stacks_bound){
         forbidden[sched_active_pid] += 1;
-        int i = forbidden[sched_active_pid] % 32;
-        in_stacks_arr[sched_active_pid][i] = (uintptr_t) pointer;
+        __loadfault();
         return;
     }
 
@@ -58,14 +52,11 @@ void __loadcheck(void* pointer, __int64_t access_size) {
 
     if (ptr < kernel_st_hp_end && ptr > kernel_st_hp_start){
         forbidden[sched_active_pid] += 1;
-        int i = forbidden[sched_active_pid] % 32;
-        in_stacks_arr[sched_active_pid][i] = (uintptr_t) pointer;
+        //__loadfault();
         return;
     }
 
     // Everything else (R4 or Periphals) - allowed
-
-    outer_stacks += 1; 
 
     return;
 }
@@ -76,7 +67,6 @@ void __storecheck(void* pointer, __int64_t access_size) {
     /* PRIVILIGED ACCESS - allways allowed */
 
     if (irq_is_in()) {
-        in_irq +=1;
         return;
     }
 
@@ -89,14 +79,13 @@ void __storecheck(void* pointer, __int64_t access_size) {
     // Load access in R3 - allowed
 
     if (ptr < 0x20000000){
-        __stackoverflow();
+        __storefault();
     }
 
 
     // Store access in R1 - allowed
     
     if (ptr < upper_stack_bound && ptr > (lower_stack_bound-32)){
-        in_stack += 1;
         return;
     }
 
@@ -104,8 +93,7 @@ void __storecheck(void* pointer, __int64_t access_size) {
 
     if (ptr < kernel_data_end){
         forbidden[sched_active_pid] += 1;
-        int i = forbidden[sched_active_pid] % 32;
-        in_stacks_arr[sched_active_pid][i] = (uintptr_t) pointer;
+        __storefault();
         return;
     }
 
@@ -113,17 +101,14 @@ void __storecheck(void* pointer, __int64_t access_size) {
 
     if (ptr < kernel_st_hp_end && ptr > kernel_st_hp_start){
         forbidden[sched_active_pid] += 1;
-        int i = forbidden[sched_active_pid] % 32;
-        in_stacks_arr[sched_active_pid][i] = (uintptr_t) pointer;
+        //__storefault();
         return;
     }
 
     // Everything else (R4 or Periphals) - allowed
 
-    outer_stacks += 1;  
     return; 
 }
-
 
 void __stackoverflow(void){
 
@@ -132,8 +117,35 @@ void __stackoverflow(void){
     __asm__ volatile (
     "svc    #0xB    \n"
     );
-
 }
+
+void __loadfault(void){
+
+    /* LOADFAULT DETECTED - SVCall for own exit */
+
+    __asm__ volatile (
+    "svc    #0xC    \n"
+    );
+}
+
+void __storefault(void){
+
+    /* STOREFAULT DETECTED - SVCall for own exit */
+
+    __asm__ volatile (
+    "svc    #0xD    \n"
+    );
+}
+
+void __irqfault(void){
+
+    /* IRQ ACCESS DETECTED - SVCall for own exit */
+
+    __asm__ volatile (
+    "svc    #0xE    \n"
+    );
+}
+
 
 
 
