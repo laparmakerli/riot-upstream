@@ -320,30 +320,25 @@ void SVC_Handler_C(unsigned int *svc_args){
                 svc_args[0] = msg_reply((msg_t*)stacked_r0, (msg_t*)stacked_r1);
                 break;
         case 11:
+                printf("Stackoverflow in Thread %i\n", sched_active_pid);
+                printf("Exit threads... %i\n", sched_active_pid);
+                sched_task_exit();
+        case 12:
+                printf("Illegal Load in Thread %i\n", sched_active_pid);
+                printf("Exit threads... %i\n", sched_active_pid);
+                sched_task_exit();
+        case 13:
+                printf("Illegal Store in Thread %i\n", sched_active_pid);
+                printf("Exit threads... %i\n", sched_active_pid);
+                sched_task_exit();
+        case 14:
+                printf("Illegal Call of IRQ-only function in Thread %i\n", sched_active_pid);
+                printf("Exit threads... %i\n", sched_active_pid);
                 sched_task_exit();
         default: break;
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
