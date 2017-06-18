@@ -29,6 +29,8 @@
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
 
+char rpl_stack[GNRC_RPL_STACK_SIZE];
+
 kernel_pid_t gnrc_rpl_pid = KERNEL_PID_UNDEF;
 const ipv6_addr_t ipv6_addr_all_rpl_nodes = GNRC_RPL_ALL_NODES_ADDR;
 static uint32_t _lt_time = GNRC_RPL_LIFETIME_UPDATE_STEP * SEC_IN_USEC;
@@ -53,7 +55,7 @@ kernel_pid_t gnrc_rpl_init(kernel_pid_t if_pid)
     if (gnrc_rpl_pid == KERNEL_PID_UNDEF) {
         _instance_id = 0;
         /* start the event loop */
-        gnrc_rpl_pid = thread_create_protected(GNRC_RPL_STACK_SIZE, GNRC_RPL_PRIO,
+        gnrc_rpl_pid = thread_create(rpl_stack, GNRC_RPL_STACK_SIZE, GNRC_RPL_PRIO,
                                      THREAD_CREATE_STACKTEST,
                                      _event_loop, NULL, "RPL");
 
