@@ -215,7 +215,11 @@ NORETURN void sched_task_exit(void)
 
     sched_active_thread = NULL;
 
-    isr_thread_arch_start_threading();
+    if (irq_is_in){
+        isr_thread_arch_start_threading();
+    } else {
+        thread_arch_start_threading();
+    }
 
 
     //cpu_switch_context_exit();

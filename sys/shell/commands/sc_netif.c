@@ -105,7 +105,7 @@ const char *_netstats_module_to_str(uint8_t module)
 
 static int _netif_stats(kernel_pid_t dev, unsigned module, bool reset)
 {
-    netstats_t** stat_ptr_ptr = alloc_shared(sizeof(sizeof(uintptr_t)));
+    netstats_t** stat_ptr_ptr = alloc_shared_block(sizeof(sizeof(uintptr_t)));
 
     int res = -ENOTSUP;
 

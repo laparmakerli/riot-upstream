@@ -31,7 +31,7 @@ OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
 OUTPUT_ARCH(arm)
 SEARCH_DIR(.)
 
-_User_Stack_Size = 0x8000; /* 32kiB User Stack space */
+_Protected_Stack_Size = 0x8000; /* 32kiB User Stack space */
 
 
 /* Section Definitions */
@@ -105,13 +105,13 @@ SECTIONS
     _etext = .;
 
 
-    ._user_stack :
+    ._protected_threads :
     {
         . = ALIGN(4);
-        PROVIDE (user_stack_start = ABSOLUTE(.));
-        . = . + _User_Stack_Size;
+        PROVIDE (protected_threads_start = ABSOLUTE(.));
+        . = . + _Protected_Stack_Size;
         . = ALIGN(4);
-        PROVIDE (user_stack_end = ABSOLUTE(.));
+        PROVIDE (protected_threads_end = ABSOLUTE(.));
     } > ram
 
 

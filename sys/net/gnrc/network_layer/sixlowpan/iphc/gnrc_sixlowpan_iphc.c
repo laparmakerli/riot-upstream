@@ -710,7 +710,7 @@ bool gnrc_sixlowpan_iphc_encode(gnrc_pktsnip_t *pkt)
         }
 
         if ((src_ctx != NULL) || ipv6_addr_is_link_local(&(ipv6_hdr->src))) {
-            eui64_t* iid = alloc_shared(sizeof(eui64_t));
+            eui64_t* iid = alloc_shared_block(sizeof(eui64_t));
             iid->uint64.u64 = 0;
 
             if ((netif_hdr->src_l2addr_len == 2) ||

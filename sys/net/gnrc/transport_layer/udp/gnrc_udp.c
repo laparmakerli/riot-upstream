@@ -216,7 +216,7 @@ static void *_event_loop(void *arg)
     (void)arg;
     msg_t msg, reply;
     msg_t msg_queue[GNRC_UDP_MSG_QUEUE_SIZE];
-    gnrc_netreg_entry_t* netreg = alloc_shared(sizeof(gnrc_netreg_entry_t));
+    gnrc_netreg_entry_t* netreg = alloc_shared_block(sizeof(gnrc_netreg_entry_t));
 
 
     /* preset reply message */

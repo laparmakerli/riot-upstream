@@ -45,7 +45,7 @@ static inline int _get_set(kernel_pid_t pid, uint16_t type,
     DEBUG("Data Pointer _get_set :: %p\n\n", data);
     msg_t cmd;
     msg_t ack;
-    gnrc_netapi_opt_t* o = alloc_shared(sizeof(gnrc_netapi_opt_t));
+    gnrc_netapi_opt_t* o = alloc_shared_block(sizeof(gnrc_netapi_opt_t));
     /* set ńetapi's option struct */
     o->opt = opt;
     o->context = context;

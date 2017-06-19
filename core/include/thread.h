@@ -423,8 +423,17 @@ uintptr_t thread_measure_stack_free(char *stack);
 void thread_print_stack(void);
 
 
-
-kernel_pid_t thread_create_protected_handler(int stacksize, char priority, int flags, thread_task_func_t function, void *arg, const char *name);
+/**
+ * @brief   Handles protected Thread creation
+ *
+ * Should not be used by Users
+ */
+kernel_pid_t thread_create_protected_handler(int stacksize, 
+                                      char priority, 
+                                      int flags, 
+                                      thread_task_func_t function, 
+                                      void *arg, 
+                                      const char *name);
 
 
 
@@ -436,7 +445,6 @@ typedef struct thread_description {
   void * arg;
   const char *name;
 }thread_description;
-
 
 
 

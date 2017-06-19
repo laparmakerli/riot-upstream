@@ -156,8 +156,8 @@ int _icmpv6_ping(int argc, char **argv)
     msg_t msg;
 
     gnrc_netreg_entry_t tmp = { NULL, ICMPV6_ECHO_REP, thread_getpid() };
-    gnrc_netreg_entry_t *ipv6_entry = alloc_shared(sizeof(gnrc_netreg_entry_t));
-    gnrc_netreg_entry_t *my_entry = alloc_shared(sizeof(gnrc_netreg_entry_t));
+    gnrc_netreg_entry_t *ipv6_entry = alloc_shared_block(sizeof(gnrc_netreg_entry_t));
+    gnrc_netreg_entry_t *my_entry = alloc_shared_block(sizeof(gnrc_netreg_entry_t));
 
     memcpy(ipv6_entry, &tmp, sizeof(gnrc_netreg_entry_t));
     memcpy(my_entry, &tmp, sizeof(gnrc_netreg_entry_t));

@@ -312,7 +312,7 @@ static void _send(gnrc_pktsnip_t *pkt)
 static void *_event_loop(void *args)
 {
     msg_t msg, reply, msg_q[GNRC_SIXLOWPAN_MSG_QUEUE_SIZE];
-    gnrc_netreg_entry_t* me_reg = alloc_shared(sizeof(gnrc_netreg_entry_t));
+    gnrc_netreg_entry_t* me_reg = alloc_shared_block(sizeof(gnrc_netreg_entry_t));
 
     (void)args;
     svc_msg_init_queue(msg_q, GNRC_SIXLOWPAN_MSG_QUEUE_SIZE);

@@ -152,7 +152,6 @@ kernel_pid_t thread_create_protected(int stacksize, char priority, int flags, th
         return thread_create_protected_handler(stacksize, priority, flags, func, arg, name);
     }
 
-    
     thread_description td;
     td.stacksize = stacksize;
     td.priority = priority;
@@ -169,8 +168,6 @@ kernel_pid_t thread_create_protected(int stacksize, char priority, int flags, th
 
     return ret; 
 }
-
-
 
 
 kernel_pid_t thread_create_protected_handler(int stacksize, char priority, int flags, thread_task_func_t function, void *arg, const char *name)

@@ -242,7 +242,7 @@ static void _dispatch_next_header(gnrc_pktsnip_t *current, gnrc_pktsnip_t *pkt,
 static void *_event_loop(void *args)
 {
     msg_t msg, reply, msg_q[GNRC_IPV6_MSG_QUEUE_SIZE];
-    gnrc_netreg_entry_t* me_reg = alloc_shared(sizeof(gnrc_netreg_entry_t));
+    gnrc_netreg_entry_t* me_reg = alloc_shared_block(sizeof(gnrc_netreg_entry_t));
 
     (void)args;
     svc_msg_init_queue(msg_q, GNRC_IPV6_MSG_QUEUE_SIZE);

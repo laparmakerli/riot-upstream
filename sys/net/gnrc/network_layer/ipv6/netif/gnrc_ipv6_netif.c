@@ -802,8 +802,8 @@ void gnrc_ipv6_netif_init_by_dev(void)
 
     for (size_t i = 0; i < ifnum; i++) {
         ipv6_addr_t addr;
-        eui64_t* iid = (eui64_t*) alloc_shared(sizeof(eui64_t));
-        uint16_t* tmp = (uint16_t*) alloc_shared(sizeof(uint16_t));
+        eui64_t* iid = (eui64_t*) alloc_shared_block(sizeof(eui64_t));
+        uint16_t* tmp = (uint16_t*) alloc_shared_block(sizeof(uint16_t));
         gnrc_ipv6_netif_t* ipv6_if = gnrc_ipv6_netif_get(ifs[i]);
 
         if (ipv6_if == NULL) {
@@ -813,13 +813,13 @@ void gnrc_ipv6_netif_init_by_dev(void)
         mutex_lock(&ipv6_if->mutex);
 
 #ifdef MODULE_GNRC_SIXLOWPAN
-        gnrc_nettype_t* if_type = (gnrc_nettype_t*) alloc_shared(sizeof(gnrc_nettype_t));
+        gnrc_nettype_t* if_type = (gnrc_nettype_t*) alloc_shared_block(sizeof(gnrc_nettype_t));
         *if_type = GNRC_NETTYPE_UNDEF;
 
         if ((gnrc_netapi_get(ifs[i], NETOPT_PROTO, 0, if_type,
                              sizeof(*if_type)) != -ENOTSUP) &&
             (*if_type == GNRC_NETTYPE_SIXLOWPAN)) {
-            uint16_t *src_len = alloc_shared(sizeof(uint16_t));
+            uint16_t *src_len = alloc_shared_block(sizeof(uint16_t));
             *src_len = 8;
 
             DEBUG("ipv6 netif: Set 6LoWPAN flag\n");

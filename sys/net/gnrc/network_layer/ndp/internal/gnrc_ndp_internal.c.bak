@@ -170,7 +170,7 @@ void gnrc_ndp_internal_send_nbr_adv(kernel_pid_t iface, ipv6_addr_t *tgt, ipv6_a
     }
 
     if (supply_tl2a) {
-        uint8_t* l2src = alloc_shared(8 * sizeof(uint8_t));
+        uint8_t* l2src = alloc_shared_block(8 * sizeof(uint8_t));
         size_t l2src_len;
         /* we previously checked if we are the target, so we can take our L2src */
         l2src_len = _get_l2src(iface, l2src, sizeof(l2src));
@@ -236,7 +236,7 @@ void gnrc_ndp_internal_send_nbr_sol(kernel_pid_t iface, ipv6_addr_t *src, ipv6_a
     gnrc_pktsnip_t *hdr, *pkt = NULL;
     /* both suppressions, since they are needed in the MODULE_GNRC_SIXLOWPAN_ND branch */
     /* cppcheck-suppress variableScope */
-    uint8_t* l2src = alloc_shared(8 * sizeof(uint8_t));
+    uint8_t* l2src = alloc_shared_block(8 * sizeof(uint8_t));
     /* cppcheck-suppress variableScope */
     size_t l2src_len = 0;
 
@@ -317,7 +317,7 @@ void gnrc_ndp_internal_send_rtr_sol(kernel_pid_t iface, ipv6_addr_t *dst)
     }
     /* check if there is a fitting source address to target */
     if ((src = gnrc_ipv6_netif_find_best_src_addr(iface, dst, false)) != NULL) {
-        uint8_t* l2src = alloc_shared(8 * sizeof(uint8_t));
+        uint8_t* l2src = alloc_shared_block(8 * sizeof(uint8_t));
         size_t l2src_len;
         l2src_len = _get_l2src(iface, l2src, sizeof(l2src));
         if (l2src_len > 0) {
@@ -531,7 +531,7 @@ void gnrc_ndp_internal_send_rtr_adv(kernel_pid_t iface, ipv6_addr_t *src, ipv6_a
     /* add SL2A for source address */
     if (src != NULL) {
         DEBUG(" - SL2A\n");
-        uint8_t* l2src = alloc_shared(8 * sizeof(uint8_t));
+        uint8_t* l2src = alloc_shared_block(8 * sizeof(uint8_t));
         size_t l2src_len;
         /* optimization note: MAY also be omitted to facilitate in-bound load balancing over
          * replicated interfaces.
@@ -759,7 +759,7 @@ bool gnrc_ndp_internal_pi_opt_handle(kernel_pid_t iface, uint8_t icmpv6_type,
     if (((prefix == NULL) ||
          (gnrc_ipv6_netif_addr_get(prefix)->prefix_len != pi_opt->prefix_len)) &&
         (pi_opt->valid_ltime.u32 != 0)) {
-        ipv6_addr_t* pref_addr = alloc_shared(sizeof(ipv6_addr_t));
+        ipv6_addr_t* pref_addr = alloc_shared_block(sizeof(ipv6_addr_t));
         ipv6_addr_t tmp = IPV6_ADDR_UNSPECIFIED;
         memcpy(pref_addr, &tmp, sizeof(ipv6_addr_t));
 
@@ -809,7 +809,7 @@ static size_t _get_l2src(kernel_pid_t iface, uint8_t *l2src, size_t l2src_maxlen
 {
     bool try_long = false;
     int res;
-    uint16_t* l2src_len = alloc_shared(sizeof(uint16_t));
+    uint16_t* l2src_len = alloc_shared_block(sizeof(uint16_t));
     /* maximum address length that fits into a minimum length (8) S/TL2A option */
     const uint16_t max_short_len = 6;
 

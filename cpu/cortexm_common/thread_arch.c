@@ -234,18 +234,6 @@ char *thread_arch_stack_init(thread_task_func_t task_func,
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 /**
   * @brief  This function handles SVCall exception.
   *
@@ -274,8 +262,6 @@ __attribute__((naked)) void isr_svc(void)
   * @param  None
   * @retval None
   */
-
-
 void SVC_Handler_C(unsigned int *svc_args){
     uint8_t svc_number;
     svc_number = ((char *) svc_args[6])[-2]; 
@@ -321,11 +307,11 @@ void SVC_Handler_C(unsigned int *svc_args){
                 break;
         case 11:
                 printf("Stackoverflow in Thread %i\n", sched_active_pid);
-                printf("Exit threads %i\n", sched_active_pid);
+                printf("Exit thread %i\n", sched_active_pid);
                 sched_task_exit();
         case 12:
                 printf("Illegal Load in Thread %i\n", sched_active_pid);
-                printf("Exit threads... %i\n", sched_active_pid);
+                printf("Exit thread %i\n", sched_active_pid);
                 sched_task_exit();
         case 13:
                 printf("Illegal Store in Thread %i\n", sched_active_pid);

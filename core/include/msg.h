@@ -212,6 +212,10 @@ typedef struct {
  */
 int msg_send(msg_t *m, kernel_pid_t target_pid);
 
+
+// msg_send called inside an svc wrapper to get access to 
+// the message queue of other threads
+
 int svc_msg_send(msg_t *m, kernel_pid_t target_pid);
 
 
@@ -234,6 +238,9 @@ int svc_msg_send(msg_t *m, kernel_pid_t target_pid);
  */
 int msg_try_send(msg_t *m, kernel_pid_t target_pid);
 
+// msg_try_send called inside an svc wrapper to get access to 
+// the message queue of other threads
+
 int svc_msg_try_send(msg_t *m, kernel_pid_t target_pid);
 
 
@@ -252,6 +259,9 @@ int svc_msg_try_send(msg_t *m, kernel_pid_t target_pid);
  * @return 0 if the thread's message queue is full (or inexistent)
  */
 int msg_send_to_self(msg_t *m);
+
+// svc_msg_send_to_self called inside an svc wrapper to get access to 
+// the message queue of other threads
 
 int svc_msg_send_to_self(msg_t *m);
 
@@ -306,6 +316,9 @@ static inline int msg_sent_by_int(const msg_t *m)
  * @return  1, Function always succeeds or blocks forever.
  */
 int msg_receive(msg_t *m);
+
+// svc_msg_receive called inside an svc wrapper to get access to 
+// the message queue of other threads
 
 int svc_msg_receive(msg_t *m);
 

@@ -45,36 +45,49 @@ extern int udp_cmd(int argc, char **argv);
 char stack_arr[256];
 
 uintptr_t arb_pointer;
-int k;
+
+
+// this function provokes a stack overflow by
+// calling itself recursively 
 
 int __attribute__ ((noinline))  stack_overflow(int j){
-    //volatile int arr[16];
-    if (k>100){
-        return k;
+    if (j>100){
+        return j;
     }
-    return stack_overflow(k);
+    return stack_overflow(j);
 }
 
-int __attribute__ ((noinline))  load_from(int j){
+// this function loads from an arbitrary address
+// casted from an an integer 
+
+int __attribute__ ((noinline))  load_from(){
     int res = *((int*) arb_pointer);
     return res;
 }
 
-int __attribute__ ((noinline))  store_into(int j){
+
+// this function stores 10 to an arbitrary address
+// casted from an an integer 
+
+int __attribute__ ((noinline))  store_into(){
     int *ptr = (int*) arb_pointer;
     *ptr = 10;
     return 0;
 }
+
+
+// this function handles the new
+// created memfault thread
 
 void *thread_handler(void *arg){
     if (strcmp("stackoverflow", arg)==0){
         stack_overflow(2);
     } else
     if (strcmp("load", arg)==0){
-        load_from(2);
+        load_from();
     } else
     if (strcmp("store", arg)==0){
-        store_into(2);
+        store_into();
     }
 
     return NULL;

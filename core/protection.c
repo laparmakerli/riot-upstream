@@ -1,3 +1,10 @@
+/**
+ * @ingroup core
+ * @{
+ * @file        protection.c
+ * @author      Lars Parmakerli 
+ */
+
 #include <thread.h>
 #include <stdio.h>
 #include <sched.h>
@@ -6,7 +13,6 @@
 #include <inttypes.h>
 #include <protection.h>
 #include <sched.h>
-
 
 /*DEBUG*/
 int forbidden[8] = {0,0,0,0,0,0,0,0};
@@ -42,7 +48,7 @@ void __loadcheck(void* pointer, __int64_t access_size) {
 
     // Load access in R2 - not allowed 
 
-    if (ptr < upper_stacks_bound){
+    if (ptr < upper_threads_bound){
         if (sched_active_pid == 0){
             return;
         }
