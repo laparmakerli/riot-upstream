@@ -49,11 +49,11 @@ char stack_arr[256];
 
 // need to set arb pointer manually. 
 // passing as function argument is broken
-volatile uintptr_t arb_pointer = 0x20000001;
+volatile uintptr_t arb_pointer = 0x20000001; 
 
 
 // this function provokes a stack overflow by
-// calling itself recursively 
+// calling itself recursively
 
 int __attribute__ ((noinline))  stack_overflow(int j){
     if (j>100){
@@ -65,8 +65,8 @@ int __attribute__ ((noinline))  stack_overflow(int j){
 // this function loads from an arbitrary address
 // casted from an an integer 
 
-int __attribute__ ((noinline))  load_from(){
-    int *ptr = (int*) arb_pointer;
+int __attribute__ ((noinline)) load_from(){
+    int *ptr = (int*) arb_pointer; 
     int res = *ptr;
     thread_sleep();
     return res;
@@ -77,7 +77,7 @@ int __attribute__ ((noinline))  load_from(){
 // casted from an an integer 
 
 int __attribute__ ((noinline))  store_into(){
-    int *ptr = (int*) arb_pointer;
+    int *ptr = (int*) arb_pointer; 
     *ptr = 10;
     thread_sleep();
     return 0;
@@ -109,7 +109,7 @@ int crash_cmd(int argc, char **argv)
         asm("nop");
     }
 
-    thread_create(stack_arr, 1500,
+    thread_create(stack_arr, 256,
                     THREAD_PRIORITY_MAIN - 1,
                     THREAD_CREATE_STACKTEST,
                     thread_handler,
