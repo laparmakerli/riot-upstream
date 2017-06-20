@@ -115,6 +115,7 @@ extern int _zep_init(int argc, char **argv);
 
 #ifdef MODULE_GNRC_RPL
 extern int _gnrc_rpl(int argc, char **argv);
+extern int _gnrc_rpl_benchmarked(int argc, char **argv);
 #endif
 
 #ifdef MODULE_GNRC_SIXLOWPAN_CTX
@@ -199,7 +200,7 @@ const shell_command_t _shell_command_list[] = {
 #endif
 #endif
 #ifdef MODULE_GNRC_RPL
-    {"rpl", "rpl configuration tool ('rpl help' for more information)", _gnrc_rpl },
+    {"rpl", "rpl configuration tool ('rpl help' for more information)", _gnrc_rpl_benchmarked },
 #endif
 #ifdef MODULE_GNRC_SIXLOWPAN_CTX
 #ifdef MODULE_GNRC_SIXLOWPAN_ND_BORDER_ROUTER
