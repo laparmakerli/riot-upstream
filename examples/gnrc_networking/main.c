@@ -31,6 +31,7 @@
 #include <stdarg.h>
 #include <time.h>
 #include <sys/types.h>
+#include <xtimer.h>
 
 #include <unistd.h>
 
@@ -41,10 +42,14 @@
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 
 extern int udp_cmd(int argc, char **argv);
+int udp_cmd_benchmarked(int argc, char **argv);
 
 char stack_arr[256];
 
-uintptr_t arb_pointer;
+
+// need to set arb pointer manually. 
+// passing as function argument is broken
+volatile uintptr_t arb_pointer = 0x20000001;
 
 
 // this function provokes a stack overflow by
@@ -61,7 +66,9 @@ int __attribute__ ((noinline))  stack_overflow(int j){
 // casted from an an integer 
 
 int __attribute__ ((noinline))  load_from(){
-    int res = *((int*) arb_pointer);
+    int *ptr = (int*) arb_pointer;
+    int res = *ptr;
+    thread_sleep();
     return res;
 }
 
@@ -72,6 +79,7 @@ int __attribute__ ((noinline))  load_from(){
 int __attribute__ ((noinline))  store_into(){
     int *ptr = (int*) arb_pointer;
     *ptr = 10;
+    thread_sleep();
     return 0;
 }
 
@@ -97,10 +105,11 @@ void *thread_handler(void *arg){
 int crash_cmd(int argc, char **argv)
 {
     if (strcmp("load", argv[0])==0 || strcmp("store", argv[0])==0){
-        arb_pointer = atoi(argv[1]);
+        //arb_pointer = atoi(argv[1]);
+        asm("nop");
     }
 
-    thread_create_protected(256,
+    thread_create(stack_arr, 1500,
                     THREAD_PRIORITY_MAIN - 1,
                     THREAD_CREATE_STACKTEST,
                     thread_handler,
@@ -134,3 +143,17 @@ int main(void)
     /* should be never reached */
     return 0;
 }
+
+
+int udp_cmd_benchmarked(int argc, char **argv){
+    unsigned long start = xtimer_now();
+
+    int res = udp_cmd(argc, argv);
+
+    unsigned long end = xtimer_now();
+
+    printf("udp time : %lu\n", end-start);
+
+    return res;
+}
+
