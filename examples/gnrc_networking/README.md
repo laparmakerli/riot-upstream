@@ -10,7 +10,7 @@ The thread exits before currupting data of other threads or the kernel.
 load and store commands start a new thread that loads/stores from/to an arbitrary
 address. If the memory access is illegal, the thread exits.
 
-## Current Problems:
+### Current Problems:
 
 passing arbitrary integer values to load or store from them 
 as pointer is broken. The pointer (arb_pointer) has to be set 

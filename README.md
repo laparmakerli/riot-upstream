@@ -1,16 +1,26 @@
 # RIOS OS with Safety Code instrumentation
 
+## Requirements
+
+Installation of LLVM ARM TOOLCHAIN
+The application was teset with LLVM 4.0
+
+## Compilation
 
 1. Change to Branch 'safety'
 2. Go into the $RIOTBASE/llvm-protection-pass Directory and follow the instructions to compile the Protection Pass
 1. Go into the $RIOTBASE/examples/gnrc\_networking directory and compile the example via:
 
-    $ TOOLCHAIN=llvm BOARD=<board> make all
+    $ TOOLCHAIN=llvm BOARD=... make all
 
 The application has been tested on the STM32F103REY MCU Board on <www.iot-lab.info>.
 Compilation for IoT-Lab:
 
     $ TOOLCHAIN=llvm BOARD=iotlab-m3 make all
+
+
+
+# RIOT ORIGINAL README
 
 
 
