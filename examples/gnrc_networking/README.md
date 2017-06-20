@@ -1,4 +1,21 @@
-# gnrc_networking example
+# gnrc_networking example for testing safety instrumentation
+
+network stack threads run in protected threads and are protected from external
+access. The commands ifconfig, rpl init #num. udp server start and ping6 $addr can be 
+used as usual.
+
+stackoverflow command can be used to start a new thread that provokes a stack overflow.
+The thread exits before currupting data of other threads or the kernel.
+
+load and store commands start a new thread that loads/stores from/to an arbitrary
+address. If the memory access is illegal, the thread exits.
+
+## Current Problems:
+
+passing arbitrary integer values to load or store from them 
+as pointer is broken. The pointer (arb_pointer) has to be set 
+manually in main.c
+
 
 This example shows you how to try out the code in two different ways: Either by communicating
 between the RIOT machine and its Linux host, or by communicating between two RIOT instances.
