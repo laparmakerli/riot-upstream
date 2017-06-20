@@ -27,6 +27,8 @@
 #include "net/gnrc/rpl/p2p.h"
 #include "net/gnrc/rpl/p2p_dodag.h"
 #include "net/gnrc/rpl/p2p_structs.h"
+#include <xtimer.h>
+
 #endif
 
 int _gnrc_rpl_init(char *arg)
@@ -403,6 +405,24 @@ int _gnrc_rpl(int argc, char **argv)
     puts("* show\t\t\t\t\t- show instance and dodag tables");
     return 0;
 }
+
+
+int _gnrc_rpl_benchmarked(int argc, char **argv){
+    unsigned long start = xtimer_now();
+
+    int res = _gnrc_rpl(argc, argv);
+
+    unsigned long end = xtimer_now();
+
+    printf("rpl time : %lu\n", end-start);
+
+    return res;
+}
+
+
+
+
+
 /**
  * @}
  */

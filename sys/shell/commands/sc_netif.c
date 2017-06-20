@@ -1242,7 +1242,7 @@ int _netif_config_benchmarked(int argc, char **argv){
 
     unsigned long end = xtimer_now();
 
-    printf("ifconfig time : %lu\n", start-end);
+    printf("ifconfig time : %lu\n", end-start);
 
     return res;
 }
